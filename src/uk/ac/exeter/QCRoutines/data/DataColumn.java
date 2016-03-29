@@ -59,4 +59,8 @@ public class DataColumn {
 			}
 		}
 	}
+	
+	public int getColumnIndex() {
+		return columnConfig.getIndex();
+	}
 }
