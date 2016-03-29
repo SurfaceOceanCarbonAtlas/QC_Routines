@@ -132,7 +132,7 @@ public class Flag implements Comparable<Flag> {
 	 * @param value The flag value
 	 * @throws InvalidFlagException If the flag value is invalid
 	 */
-	protected static boolean isValidFlagValue(int value) {
+	public static boolean isValidFlagValue(int value) {
 		return (value == VALUE_GOOD || value == VALUE_QUESTIONABLE || value == VALUE_BAD || value == VALUE_NOT_SET);
 	}
 	
