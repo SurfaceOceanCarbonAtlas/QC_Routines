@@ -49,26 +49,6 @@ public class Flag implements Comparable<Flag> {
 	private static final String TEXT_NOT_SET = "Not Set";
 
 	/**
-	 * The special value for an Assumed Good flag
-	 */
-	private static final int VALUE_ASSUMED_GOOD = -2;
-	
-	/**
-	 * The text value for an Assumed Good flag
-	 */
-	private static final String TEXT_ASSUMED_GOOD = "Assumed Good";
-	
-	/**
-	 * The special value to indicate that a specific flag must be set
-	 */
-	private static final int VALUE_NEEDED = -3;
-	
-	/**
-	 * The text value to indicate that a specific flag must be set
-	 */
-	private static final String TEXT_NEEDED = "Flag needed";
-			
-	/**
 	 *  An instance of a Good flag
 	 */
 	public static final Flag GOOD = makeGoodFlag();
@@ -89,16 +69,6 @@ public class Flag implements Comparable<Flag> {
 	public static final Flag NOT_SET = makeNotSetFlag();
 	
 	/**
-	 * An instance of an Assumed Good flag
-	 */
-	public static final Flag ASSUMED_GOOD = makeAssumedGoodFlag();
-	
-	/**
-	 * An instance of a Needed flag
-	 */
-	public static final Flag NEEDED = makeNeededFlag();
-	
-	/**
 	 * The WOCE value for this flag
 	 */
 	private int flagValue;
@@ -108,7 +78,7 @@ public class Flag implements Comparable<Flag> {
 	 * @param flagValue The flag's WOCE value
 	 * @throws InvalidFlagException If the flag value is invalid
 	 */
-	public Flag(int flagValue) throws InvalidFlagException {
+	protected Flag(int flagValue) throws InvalidFlagException {
 		if (!isValidFlagValue(flagValue)) {
 			throw new InvalidFlagException(flagValue);
 		}
@@ -147,14 +117,6 @@ public class Flag implements Comparable<Flag> {
 			result = TEXT_NOT_SET;
 			break;
 		}
-		case VALUE_ASSUMED_GOOD: {
-			result = TEXT_ASSUMED_GOOD;
-			break;
-		}
-		case VALUE_NEEDED: {
-			result = TEXT_NEEDED;
-			break;
-		}
 		default: {
 			// This should never happen!
 			result = "***INVALID FLAG VALUE***";
@@ -171,8 +133,7 @@ public class Flag implements Comparable<Flag> {
 	 * @throws InvalidFlagException If the flag value is invalid
 	 */
 	protected static boolean isValidFlagValue(int value) {
-		return (value == VALUE_GOOD || value == VALUE_QUESTIONABLE || value == VALUE_BAD || 
-				value == VALUE_NOT_SET || value == VALUE_NEEDED || value == VALUE_ASSUMED_GOOD);
+		return (value == VALUE_GOOD || value == VALUE_QUESTIONABLE || value == VALUE_BAD || value == VALUE_NOT_SET);
 	}
 	
 	/**
@@ -235,32 +196,6 @@ public class Flag implements Comparable<Flag> {
 		return flag;
 	}
 	
-	/**
-	 * Create an instance of a Needed flag
-	 * @return A Needed flag
-	 */
-	private static Flag makeNeededFlag() {
-		Flag flag = null;
-		try {
-			flag = new Flag(VALUE_NEEDED);
-		} catch (InvalidFlagException e) {
-			// This won't be thrown; do nothing
-		}
-		
-		return flag;
-	}
-	
-	private static Flag makeAssumedGoodFlag() {
-		Flag flag = null;
-		try {
-			flag = new Flag(VALUE_ASSUMED_GOOD);
-		} catch (InvalidFlagException e) {
-			// This won't be thrown; do nothing
-		}
-		
-		return flag;
-	}
-	
 	public boolean equals(Object compare) {
 		boolean result = false;
 		if (compare instanceof Flag) {
@@ -286,9 +221,5 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public boolean moreSignificantThan(Flag flag) {
 		return (compareTo(flag) > 0);
-	}
-	
-	public boolean isGood() {
-		return (Math.abs(flagValue) == VALUE_GOOD);
 	}
 }
