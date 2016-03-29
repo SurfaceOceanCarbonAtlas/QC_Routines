@@ -5,17 +5,17 @@ import uk.ac.exeter.QCRoutines.messages.Message;
 
 public class DummyMessage extends Message {
 
-	public DummyMessage(int columnIndex, String columnName, Flag flag, int lineNumber, String fieldValue, String validValue) {
-		super(columnIndex, columnName, flag, lineNumber, fieldValue, validValue);
+	public DummyMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
 	}
 
-	public DummyMessage(int columnIndex, String columnName, Flag flag, int lineNumber, String fieldValue) {
-		super(columnIndex, columnName, flag, lineNumber, fieldValue, null);
+	public DummyMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue) {
+		super(lineNumber, columnIndex, columnName, flag, fieldValue, null);
 	}
 
 	@Override
 	protected String getFullMessage() {
-		return "This is a dummy message for column '" + COLUMN_NAME_IDENTIFIER + "' on line " + lineNumber;
+		return "This is a dummy message for column '" + columnName + "' on line " + lineNumber;
 	}
 
 	@Override

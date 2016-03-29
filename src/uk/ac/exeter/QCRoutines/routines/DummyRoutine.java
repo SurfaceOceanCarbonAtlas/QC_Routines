@@ -32,7 +32,7 @@ public class DummyRoutine extends Routine {
 			
 			if (i < records.size()) {
 				try {
-					addMessage(new DummyMessage(1, "Col1", Flag.QUESTIONABLE, records.get(i).getLineNumber(), records.get(i).getValue(1)), records.get(i));
+					addMessage(new DummyMessage(records.get(i).getLineNumber(), 1, "Col1", Flag.QUESTIONABLE, records.get(i).getValue(1)), records.get(i));
 				} catch (Exception e) {
 					throw new RoutineException("Error while checking records", e);
 				}
@@ -42,7 +42,7 @@ public class DummyRoutine extends Routine {
 		for (int i = 6; i <= 10; i++) {
 			if (i < records.size()) {
 				try {
-					addMessage(new DummyMessage(2, "Col2", Flag.BAD, records.get(i).getLineNumber(), records.get(i).getValue(1)), records.get(i));
+					addMessage(new DummyMessage(records.get(i).getLineNumber(), 2, "Col2", Flag.BAD, records.get(i).getValue(1)), records.get(i));
 				} catch (Exception e) {
 					throw new RoutineException("Error while checking records", e);
 				}
@@ -52,8 +52,8 @@ public class DummyRoutine extends Routine {
 		for (int i = 1; i <= 15; i++) {
 			if (i < records.size()) {
 				try {
-					addMessage(new DummyMessage(1, "Col1", Flag.QUESTIONABLE, records.get(i).getLineNumber(), records.get(i).getValue(1)), records.get(i));
-					addMessage(new DummyMessage(2, "Col2", Flag.BAD, records.get(i).getLineNumber(), records.get(i).getValue(1)), records.get(i));
+					addMessage(new DummyMessage(records.get(i).getLineNumber(), 1, "Col1", Flag.QUESTIONABLE, records.get(i).getValue(1)), records.get(i));
+					addMessage(new DummyMessage(records.get(i).getLineNumber(), 2, "Col2", Flag.BAD, records.get(i).getValue(1)), records.get(i));
 				} catch (Exception e) {
 					throw new RoutineException("Error while checking records", e);
 				}

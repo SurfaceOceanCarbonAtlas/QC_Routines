@@ -37,7 +37,7 @@ public abstract class Message {
 
 	protected int columnIndex;
 	
-	private String columnName;
+	protected String columnName;
 	
 	private Flag flag;
 	
@@ -47,11 +47,11 @@ public abstract class Message {
 	
 	protected String validValue;
 	
-	public Message(int columnIndex, String columnName, Flag flag, int lineNumber, String fieldValue, String validValue) {
+	public Message(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+		this.lineNumber = lineNumber;
 		this.columnIndex = columnIndex;
 		this.columnName = columnName;
 		this.flag = flag;
-		this.lineNumber = lineNumber;
 		this.fieldValue = fieldValue;
 		this.validValue = validValue;
 	}

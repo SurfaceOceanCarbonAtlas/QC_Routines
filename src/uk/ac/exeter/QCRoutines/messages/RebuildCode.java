@@ -97,7 +97,7 @@ public class RebuildCode {
 		// int columnIndex, String columnName, Flag flag, int lineNumber, String fieldValue, String validValue
 		
 		try {
-			messageClass.getConstructor(int.class, String.class, Flag.class, int.class, String.class, String.class);
+			messageClass.getConstructor(int.class, int.class, String.class, Flag.class, String.class, String.class);
 		} catch (Exception e) {
 			throw new RebuildCodeException("Message class does not have the required constructor"); 
 		}
@@ -129,8 +129,8 @@ public class RebuildCode {
 	
 	public Message getMessage() throws MessageException {
 		try {
-			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, String.class, Flag.class, int.class, String.class, String.class);
-			return (Message) messageConstructor.newInstance(columnIndex, columnName, new Flag(flagValue), lineNumber, fieldValue, validValue);
+			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, int.class, String.class, Flag.class, String.class, String.class);
+			return (Message) messageConstructor.newInstance(lineNumber, columnIndex, columnName, new Flag(flagValue), fieldValue, validValue);
 		} catch (Exception e) {
 			throw new MessageException("Error while constructing message object from rebuild code", e);
 		}
