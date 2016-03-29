@@ -93,20 +93,50 @@ public class RoutineUtils {
 	}
 	
 	/**
-	 * Parse a string into a boolean value. Accept Y/T and N/F.
+	 * Parse a string into a boolean value. Accept Y/N, T/F, TRUE/FALSE, 1/0. Case insensitive.
 	 * @param value The string to be parsed
-	 * @return {@code true} if the string contents are {@code Y} or {@code T}; {@code false} if the contents are {@code N} or {@code F}.
+	 * @return The boolean value parsed from the string
 	 * @throws ParseException If the string does not contain a recognised boolean value.
 	 */
 	public static boolean parseBoolean(String value) throws ParseException {
 		boolean result = false;
 		
-		if (value.equalsIgnoreCase("Y") || value.equalsIgnoreCase("T")) {
+		switch (value.toLowerCase()) {
+		case "y":
+		case "t":
+		case "true":
+		case "1": {
 			result = true;
-		} else if (value.equalsIgnoreCase("N") || value.equalsIgnoreCase("F")) {
+			break;
+		}
+		case "n":
+		case "f":
+		case "false":
+		case "0": {
 			result = false;
-		} else {
-			throw new ParseException("Invalid boolean value (must be Y/N or T/F)", 0);
+			break;
+		}
+		default: {
+			throw new ParseException("Invalid boolean value", 0);
+		}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Determine if a String value contains a recognised boolean string
+	 * @param value The value
+	 * @return {@code true} if the string is a recognised boolean value; {@code false} if it is not
+	 */
+	public static boolean isBoolean(String value) {
+		
+		boolean result = true;
+		
+		try {
+			parseBoolean(value);
+		} catch (ParseException e) {
+			result = false;
 		}
 		
 		return result;

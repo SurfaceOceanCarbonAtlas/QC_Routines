@@ -10,7 +10,7 @@ import uk.ac.exeter.QCRoutines.messages.Flag;
  * Holds details of the configuration for a single SOCAT column
  */
 public class ColumnConfigItem {
-	
+		
 	/**
 	 * The name of the column
 	 */
@@ -93,6 +93,19 @@ public class ColumnConfigItem {
 		return index;
 	}
 	
+	/**
+	 * Returns the data type of this column
+	 * @return The data type
+	 */
+	public String getDataType() {
+		return dataType;
+	}
+	
+	/**
+	 * Parse the flag cascade configuration string.
+	 * @param columnConfig The complete column configuration
+	 * @throws ConfigException If the configuration is invalid
+	 */
 	protected void parseFlagCascade(ColumnConfig columnConfig) throws ConfigException {
 		if (null != flagCascadeConfig && flagCascadeConfig.length() > 0) {
 			List<String> cascades = Arrays.asList(flagCascadeConfig.split(";"));
