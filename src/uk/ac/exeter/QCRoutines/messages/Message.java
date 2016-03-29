@@ -1,5 +1,7 @@
 package uk.ac.exeter.QCRoutines.messages;
 
+import uk.ac.exeter.QCRoutines.data.DataColumn;
+
 public abstract class Message {
 	
 	public static final int DATE_TIME_COLUMN_INDEX = -1;
@@ -53,6 +55,15 @@ public abstract class Message {
 		this.columnName = columnName;
 		this.flag = flag;
 		this.fieldValue = fieldValue;
+		this.validValue = validValue;
+	}
+	
+	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String validValue) {
+		this.lineNumber = lineNumber;
+		this.columnIndex = dataColumn.getColumnIndex();
+		this.columnName = dataColumn.getName();
+		this.flag = flag;
+		this.fieldValue = dataColumn.getValue();
 		this.validValue = validValue;
 	}
 	
