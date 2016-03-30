@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.exeter.QCRoutines.data.DataRecord;
+import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Message;
 
 /**
@@ -48,7 +49,7 @@ public abstract class Routine {
 		return messages;
 	}
 	
-	public void addMessage(Message message, DataRecord record) {
+	public void addMessage(Message message, DataRecord record) throws DataRecordException {
 		messages.add(message);
 		record.addMessage(message);
 	}
