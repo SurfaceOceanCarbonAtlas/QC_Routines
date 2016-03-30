@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.ac.exeter.QCRoutines.data.DataColumn;
+import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
 /**
@@ -246,5 +248,16 @@ public class ColumnConfig {
 	 */
 	public boolean hasColumn(String column) {
 		return columnConfig.keySet().contains(column);
+	}
+	
+	public List<DataColumn> getDataColumns(DataRecord record) {
+		List<DataColumn> result = new ArrayList<DataColumn>(columnNames.size());
+		
+		for (String column : columnNames) {
+			ColumnConfigItem columnConfigItem = getColumnConfig(column);
+			result.add(columnConfigItem.getIndex(), new DataColumn(record, columnConfigItem));
+		}
+		
+		return result;
 	}
 }

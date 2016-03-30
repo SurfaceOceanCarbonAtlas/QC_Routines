@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.messages.MessageException;
@@ -18,32 +19,28 @@ public abstract class DataRecord {
 	protected List<Message> messages;
 	
 	/**
-	 * Flag to indicate the presence of questionable flags raised during processing
-	 */
-	private boolean hasQuestionable = false;
-	
-	/**
-	 * Flag to indicate the presence of bad flags raised during processing
-	 */
-	private boolean hasBad = false;
-	
-	/**
 	 * The line of the input file that this record came from
 	 */
-	private int lineNumber;
+	protected int lineNumber;
 	
 	/**
-	 * The quality control flag for the record.
-	 * All records are assumed to be good unless otherwise stated
+	 * The record data
 	 */
-	private Flag flag = Flag.GOOD;
-
+	private List<DataColumn> data;
+	
+	
+	public DataRecord(int lineNumber, ColumnConfig columnConfig) {
+		this.messages = new ArrayList<Message>();
+		this.lineNumber = lineNumber;
+		this.data = columnConfig.getDataColumns(this);
+	}
+	
 	/**
 	 * Builds a complete record object
 	 * @param dataFields The set of data values for the record, in the order specified by the column specification
 	 * @param lineNumber The line number of the record
 	 */
-	public DataRecord(List<String> dataFields, int lineNumber) throws DataRecordException {
+	public DataRecord(int lineNumber, ColumnConfig columnConfig, List<String> dataFields) throws DataRecordException {
 		this.messages = new ArrayList<Message>();
 		this.lineNumber = lineNumber;
 
@@ -70,13 +67,21 @@ public abstract class DataRecord {
 	public abstract double getLatitude();
 	
 	/**
-	 * Populate all fields whose values are taken directly from the input data, converting where necessary
-	 * @param lineNumber The current line number of the input file
-	 * @param colSpec The column specification
+	 * Populate all fields whose values are taken directly from the input data
 	 * @param dataFields The input data fields
-	 * @throws SocatDataException If an error occurs during processing
+	 * @throws DataRecordException If the data fields do not match the columns/data types of the record 
 	 */
-	protected abstract void setDataValues(List<String> dataFields) throws DataRecordException;
+	protected void setDataValues(List<String> dataFields) throws DataRecordException {
+		for (int i = 0; i < dataFields.size(); i++) {
+			
+			DataColumn column = data.get(i);
+			if (null == column) {
+				throw new NoSuchColumnException(lineNumber, i);
+			}
+			
+			column.setValue(dataFields.get(i));
+		}
+	}
 	
 	/**
 	 * Returns the value of a named column
@@ -84,7 +89,9 @@ public abstract class DataRecord {
 	 * @return The value of that column
 	 * @throws DataRecordException If the named column does not exist
 	 */
-	public abstract String getValue(String columnName) throws DataRecordException;
+	public String getValue(String columnName) throws NoSuchColumnException {
+		return data.get(getColumnIndex(columnName)).getValue();
+	}
 	
 	/**
 	 * Returns the value held in the specified column
@@ -92,8 +99,13 @@ public abstract class DataRecord {
 	 * @return The value of that column
 	 * @throws DataRecordException If the column does not exist
 	 */
-	public String getValue(int columnIndex) throws DataRecordException {
-		return getValue(getColumnName(columnIndex));
+	public String getValue(int columnIndex) throws NoSuchColumnException {
+		DataColumn column = data.get(columnIndex);
+		if (null == column) {
+			throw new NoSuchColumnException(lineNumber, columnIndex);
+		}
+		
+		return column.getValue();
 	}
 	
 	/**
@@ -102,7 +114,14 @@ public abstract class DataRecord {
 	 * @return The column name
 	 * @throws DataRecordException If the column does not exist
 	 */
-	public abstract String getColumnName(int columnIndex) throws DataRecordException;
+	public String getColumnName(int columnIndex) throws NoSuchColumnException {
+		DataColumn column = data.get(columnIndex);
+		if (null == column) {
+			throw new NoSuchColumnException(lineNumber, columnIndex);
+		}
+
+		return column.getName();
+	}
 	
 	/**
 	 * Returns the index of the named column
@@ -110,7 +129,23 @@ public abstract class DataRecord {
 	 * @return The 1-based column index
 	 * @throws DataRecordException If the column does not exist
 	 */
-	public abstract int getColumnIndex(String columnName) throws DataRecordException;
+	public int getColumnIndex(String columnName) throws NoSuchColumnException {
+		
+		int result = -1;
+		
+		for (DataColumn column : data) {
+			if (column.getName().equals(columnName)) {
+				result = column.getColumnIndex();
+				break;
+			}
+		}
+		
+		if (result == -1) {
+			throw new NoSuchColumnException(lineNumber, columnName);
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Indicates whether or not questionable flags were raised during the processing of this
@@ -118,7 +153,7 @@ public abstract class DataRecord {
 	 * @return {@code true} if questionable flags were raised; {@code false} otherwise.
 	 */
 	public boolean hasQuestionable() {
-		return hasQuestionable;
+		return hasMessageWithFlag(Flag.QUESTIONABLE);
 	}
 	
 	/**
@@ -127,7 +162,19 @@ public abstract class DataRecord {
 	 * @return {@code true} if bad flags were raised; {@code false} otherwise.
 	 */
 	public boolean hasBad() {
-		return hasBad;
+		return hasMessageWithFlag(Flag.BAD);	}
+	
+	private boolean hasMessageWithFlag(Flag flag) {
+		boolean result = false;
+		
+		for (Message message : messages) {
+			if (message.getFlag().equals(flag)) {
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -148,72 +195,41 @@ public abstract class DataRecord {
 
 	/**
 	 * Adds a message to the set of messages assigned to this record,
-	 * and automatically updates the record's flag to match
-	 * @param message The message
-	 */
-	public void addMessage(Message message) {
-		addMessage(message, true);
-	}
-	
-	/**
-	 * Adds a message to the set of messages assigned to this record,
 	 * and optionally updates the record's flag to match
 	 * @param message The message
 	 * @param updateFlag {@code true} if the record's flag should be updated; {@code false} if it should not.
+	 * @throws NoSuchColumnException 
 	 */
-	public void addMessage(Message message, boolean updateFlag) {
+	public void addMessage(Message message) throws NoSuchColumnException {
+		DataColumn column = data.get(message.getColumnIndex());
+		if (null == column) {
+			throw new NoSuchColumnException(lineNumber, message.getColumnIndex());
+		}
 		messages.add(message);
-		
-		Flag messageFlag = message.getFlag();
-		if (flag.equals(Flag.BAD)) {
-			hasBad = true;
-		} else if (flag.equals(Flag.QUESTIONABLE)) {
-			hasQuestionable = true;
-		}
-
-		if (updateFlag) {
-			if (messageFlag.moreSignificantThan(flag)) {
-				flag = messageFlag;
-			}
-		}
+		column.setFlag(message.getFlag());
 	}
 
-	/**
-	 * Get the most significant flag applied to this record
-	 * @return The flag for the record
-	 */
-	public Flag getFlag() {
-		return flag;
-	}
-	
 	/**
 	 * Replace all the messages for this record with the supplied list of messages.
 	 * Optionally, the record's flags will also be reset according to the flags on the messages.
 	 * @param messages The set of messages
 	 * @param setFlag Indicates whether or not the record's flag is to be updated
+	 * @throws NoSuchColumnException 
 	 */
-	public void setMessages(List<Message> messages, boolean setFlag) {
+	public void setMessages(List<Message> messages) throws NoSuchColumnException {
 		clearMessages();
 		for (Message message : messages) {
-			addMessage(message, setFlag);
+			addMessage(message);
 		}
-	}
-	
-	/**
-	 * Replace all the messages for this record with the supplied list of messages.
-	 * The record's flags will also be reset according to the flags on the messages.
-	 * @param messages The set of messages
-	 */
-	public void setMessages(List<Message> messages) {
-		setMessages(messages, true);
 	}
 	
 	/**
 	 * Replace all the messages for this record with the supplied message codes.
 	 * The record's flags will also be reset according to the flags on the messages.
 	 * @param messages The set of message codes
+	 * @throws NoSuchColumnException 
 	 */
-	public void setMessages(String codes) throws MessageException {
+	public void setMessages(String codes) throws MessageException, NoSuchColumnException {
 		setMessages(RebuildCode.getMessagesFromRebuildCodes(codes));
 	}
 	
@@ -221,26 +237,13 @@ public abstract class DataRecord {
 	 * Clear all messages from the record, and reset the flags to the default
 	 * 'good' state.
 	 */
-	public void clearMessages() {
-		messages = new ArrayList<Message>(messages.size());
-		hasBad = false;
-		hasQuestionable = false;
-		flag = Flag.GOOD;
-	}
-
-	/**
-	 * Sets the flag for this record
-	 * @param flag The flag
-	 */
-	public void setFlag(Flag flag) {
-		this.flag = flag;
-		if (flag.equals(Flag.BAD)) {
-			hasBad = true;
-		} else if (flag.equals(Flag.QUESTIONABLE)) {
-			hasQuestionable = true;
+	private void clearMessages() {
+		messages = new ArrayList<Message>();
+		for (DataColumn column : data) {
+			column.resetFlag();
 		}
 	}
-	
+
 	/**
 	 * Return a string containing the summary for all messages in this record
 	 * @return The messages summary string
@@ -255,5 +258,9 @@ public abstract class DataRecord {
 		}
 		
 		return summaries.toString();
+	}
+	
+	public DataColumn getColumn(String columnName) throws NoSuchColumnException {
+		return data.get(getColumnIndex(columnName));
 	}
 }

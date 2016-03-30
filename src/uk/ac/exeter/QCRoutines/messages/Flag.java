@@ -78,7 +78,7 @@ public class Flag implements Comparable<Flag> {
 	 * @param flagValue The flag's WOCE value
 	 * @throws InvalidFlagException If the flag value is invalid
 	 */
-	protected Flag(int flagValue) throws InvalidFlagException {
+	public Flag(int flagValue) throws InvalidFlagException {
 		if (!isValidFlagValue(flagValue)) {
 			throw new InvalidFlagException(flagValue);
 		}

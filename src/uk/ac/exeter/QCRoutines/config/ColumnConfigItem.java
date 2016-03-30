@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.exeter.QCRoutines.messages.Flag;
+import uk.ac.exeter.QCRoutines.messages.InvalidFlagException;
 
 /**
  * Holds details of the configuration for a single SOCAT column
@@ -132,15 +133,21 @@ public class ColumnConfigItem {
 							throw new ConfigException(columnConfig.getConfigFilename(), columnName, configFileLine, "Invalid bad cascade value for destionation column '" + column + "'");
 						}
 						
-						flagCascades.add(new FlagCascade(column, questionableFlagCascade, badFlagCascade));
+						flagCascades.add(new FlagCascade(column, new Flag(questionableFlagCascade), new Flag(badFlagCascade)));
 						
 						
 					} catch (NumberFormatException e) {
 						throw new ConfigException(columnConfig.getConfigFilename(), columnName, configFileLine, "Flag values for flag cascade must be numeric");
+					} catch (InvalidFlagException e) {
+						throw new ConfigException(columnConfig.getConfigFilename(), columnName, configFileLine, "Flag values for flag cascade are invalid");
 					}
 				}
 			}
 
 		}
+	}
+	
+	public List<FlagCascade> getFlagCascades() {
+		return flagCascades;
 	}
 }
