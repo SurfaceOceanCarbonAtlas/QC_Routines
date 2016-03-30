@@ -87,12 +87,12 @@ public class DataColumn {
 	public void setFlag(Flag flag) throws NoSuchColumnException {
 		if (flag.moreSignificantThan(this.flag)) {
 			this.flag = flag;
-		}
-		
-		if (flag.equals(Flag.QUESTIONABLE) || flag.equals(Flag.BAD)) {
-			List<FlagCascade> cascades = columnConfig.getFlagCascades();
-			for (FlagCascade cascade : cascades) {
-				cascade.apply(parent, flag);
+
+			if (flag.equals(Flag.QUESTIONABLE) || flag.equals(Flag.BAD)) {
+				List<FlagCascade> cascades = columnConfig.getFlagCascades();
+				for (FlagCascade cascade : cascades) {
+					cascade.apply(parent, flag);
+				}
 			}
 		}
 	}
