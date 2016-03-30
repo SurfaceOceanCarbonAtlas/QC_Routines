@@ -222,14 +222,28 @@ public class ColumnConfig {
 		return columnName;
 	}
 	
+	/**
+	 * Check that a data type string is valid
+	 * @param type The dat type string
+	 * @return {@code true} if the string is valid; {@code false} if it is not.
+	 */
 	private boolean isValidType(String type) {
 		return (type.equals(TYPE_STRING) || type.equals(TYPE_NUMERIC) || type.equals(TYPE_BOOLEAN)); 
 	}
 	
+	/**
+	 * Returns the name of the configuration file
+	 * @return The name of the configuration file
+	 */
 	protected String getConfigFilename() {
 		return configFilename;
 	}
 	
+	/**
+	 * Determines whether or not the named column exists in this configuration
+	 * @param column The column
+	 * @return {@code true} if the column exists; {@code false} if it does not
+	 */
 	public boolean hasColumn(String column) {
 		return columnConfig.keySet().contains(column);
 	}
