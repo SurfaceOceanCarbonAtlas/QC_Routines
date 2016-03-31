@@ -29,7 +29,7 @@ public class ConstantValueRoutine extends Routine {
 	@Override
 	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
 		if (parameters.size() != 2) {
-			throw new RoutineException("Incorrect number of paramters. Must be <columnName>,<maxDuration>");
+			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<maxDuration>");
 		}
 		
 		columnName = parameters.get(0);
