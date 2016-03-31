@@ -150,4 +150,12 @@ public class ColumnConfigItem {
 	public List<FlagCascade> getFlagCascades() {
 		return flagCascades;
 	}
+	
+	public boolean isNumeric() {
+		return (dataType.equals(ColumnConfig.TYPE_NUMERIC));
+	}
+	
+	public boolean isBoolean() {
+		return (dataType.equals(ColumnConfig.TYPE_BOOLEAN));
+	}
 }

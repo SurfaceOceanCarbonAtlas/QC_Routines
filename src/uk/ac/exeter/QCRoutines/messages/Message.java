@@ -67,6 +67,15 @@ public abstract class Message {
 		this.validValue = validValue;
 	}
 	
+	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String fieldValue, String validValue) {
+		this.lineNumber = lineNumber;
+		this.columnIndex = dataColumn.getColumnIndex();
+		this.columnName = dataColumn.getName();
+		this.flag = flag;
+		this.fieldValue = fieldValue;
+		this.validValue = validValue;
+	}
+	
 	/**
 	 * Returns the line number for which this message was raised.
 	 * @return The line number for which this message was raised.
