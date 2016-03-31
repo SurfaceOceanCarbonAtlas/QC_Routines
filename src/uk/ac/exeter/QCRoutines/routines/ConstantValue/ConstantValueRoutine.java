@@ -23,7 +23,7 @@ public class ConstantValueRoutine extends Routine {
 	/**
 	 * The maximum time that a value can remain constant (in minutes)
 	 */
-	private int maxDuration;
+	private double maxDuration;
 	
 	@Override
 	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
@@ -42,7 +42,7 @@ public class ConstantValueRoutine extends Routine {
 		}
 		
 		try {
-			maxDuration = Integer.parseInt(parameters.get(1));
+			maxDuration = Double.parseDouble(parameters.get(1));
 		} catch (NumberFormatException e) {
 			throw new RoutineException("Max duration parameter must be numeric");
 		}
@@ -127,7 +127,7 @@ public class ConstantValueRoutine extends Routine {
 			if (minutesDifference > maxDuration) {
 				try {
 					for (DataRecord record : constantRecords) {
-						addMessage(new ConstantValueMessage(record.getLineNumber(), record.getColumn(columnName), String.valueOf(minutesDifference), String.valueOf(maxDuration)), record);
+						addMessage(new ConstantValueMessage(record.getLineNumber(), record.getColumn(columnName), minutesDifference, maxDuration), record);
 					}
 				} catch (DataRecordException e) {
 					throw new RoutineException("Error while adding messages to records", e);
