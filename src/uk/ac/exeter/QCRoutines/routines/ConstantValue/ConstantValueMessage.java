@@ -6,8 +6,8 @@ import uk.ac.exeter.QCRoutines.messages.Message;
 
 public class ConstantValueMessage extends Message {
 
-	public ConstantValueMessage(int lineNumber, DataColumn dataColumn, Flag flag, String fieldValue, String validValue) {
-		super(lineNumber, dataColumn, flag, fieldValue, validValue);
+	public ConstantValueMessage(int lineNumber, DataColumn dataColumn, String fieldValue, String validValue) {
+		super(lineNumber, dataColumn, Flag.BAD, fieldValue, validValue);
 	}
 
 	@Override

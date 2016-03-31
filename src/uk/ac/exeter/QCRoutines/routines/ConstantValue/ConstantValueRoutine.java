@@ -12,7 +12,6 @@ import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
-import uk.ac.exeter.QCRoutines.messages.Flag;
 
 public class ConstantValueRoutine extends Routine {
 
@@ -128,7 +127,7 @@ public class ConstantValueRoutine extends Routine {
 			if (minutesDifference > maxDuration) {
 				try {
 					for (DataRecord record : constantRecords) {
-						addMessage(new ConstantValueMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, String.valueOf(minutesDifference), String.valueOf(maxDuration)), record);
+						addMessage(new ConstantValueMessage(record.getLineNumber(), record.getColumn(columnName), String.valueOf(minutesDifference), String.valueOf(maxDuration)), record);
 					}
 				} catch (DataRecordException e) {
 					throw new RoutineException("Error while adding messages to records", e);
