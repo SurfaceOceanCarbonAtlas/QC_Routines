@@ -4,14 +4,6 @@ import uk.ac.exeter.QCRoutines.data.DataColumn;
 
 public abstract class Message {
 	
-	public static final int DATE_TIME_COLUMN_INDEX = -1;
-	
-	public static final String DATE_TIME_COLUMN_NAME = "Date/Time";
-	
-	public static final int SHIP_SPEED_COLUMN_INDEX = -2;
-	
-	public static final String SHIP_SPEED_COLUMN_NAME = "Lon/Lat/Date/Time";
-	
 	public static final int NO_COLUMN_INDEX = -999;
 	
 	public static final int NO_LINE_NUMBER = -999;
