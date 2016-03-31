@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import uk.ac.exeter.QCRoutines.Routine;
 import uk.ac.exeter.QCRoutines.RoutineException;
+import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
@@ -22,7 +23,7 @@ public class ShipSpeedRoutine extends Routine {
 	private double questionableSpeedLimit = 0;
 	
 	@Override
-	public void initialise(List<String> parameters) throws RoutineException {
+	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
 		if (parameters.size() < 2) {
 			throw new RoutineException("Must supply two parameters: Questionable Speed Limit and Bad Speed Limit");
 		}

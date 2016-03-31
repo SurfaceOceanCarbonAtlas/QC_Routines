@@ -116,7 +116,7 @@ public class RoutinesConfig {
 								// to make sure everything's OK.
 								Class<?> routineClass = Class.forName(fullClassName);
 								Routine routineInstance = (Routine) routineClass.newInstance();
-								routineInstance.initialise(fields);
+								routineInstance.initialise(fields, ColumnConfig.getInstance());
 								
 								// Add the checker class to the list of all known checkers.
 								// These will be instantiated in the getInstances() method.
@@ -150,7 +150,7 @@ public class RoutinesConfig {
 		try {
 			for (CheckerInitData checkerData: routineClasses) {
 				Routine checkInstance = (Routine) checkerData.checkerClass.newInstance();
-				checkInstance.initialise(checkerData.params);
+				checkInstance.initialise(checkerData.params, ColumnConfig.getInstance());
 				checkers.add(checkInstance);
 			}
 		} catch (Exception e) {

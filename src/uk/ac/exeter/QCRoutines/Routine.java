@@ -3,6 +3,7 @@ package uk.ac.exeter.QCRoutines;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Message;
@@ -29,9 +30,10 @@ public abstract class Routine {
 	/**
 	 * Initialise the checker and check that the supplied fields are valid
 	 * @param parameters The parameters for the sanity check
+	 * @param columnConfig The column configuration for the data records
 	 * @throws RoutineException
 	 */
-	public abstract void initialise(List<String> parameters) throws RoutineException;
+	public abstract void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException;
 	
 	/**
 	 * Processes a single record from the input data file.

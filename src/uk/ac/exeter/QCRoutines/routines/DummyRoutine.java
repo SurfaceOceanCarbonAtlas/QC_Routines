@@ -4,6 +4,7 @@ import java.util.List;
 
 import uk.ac.exeter.QCRoutines.Routine;
 import uk.ac.exeter.QCRoutines.RoutineException;
+import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 
@@ -14,7 +15,7 @@ public class DummyRoutine extends Routine {
 	}
 	
 	@Override
-	public void initialise(List<String> parameters) throws RoutineException {
+	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
 		System.out.println("Dummy routine initialised with parameter '" + parameters.get(0) + "'");
 		
 	}
