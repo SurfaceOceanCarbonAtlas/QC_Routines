@@ -262,4 +262,8 @@ public class ColumnConfig {
 		
 		return result;
 	}
+	
+	public int getColumnCount() {
+		return columnNames.size();
+	}
 }
