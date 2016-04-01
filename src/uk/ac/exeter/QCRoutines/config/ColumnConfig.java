@@ -81,9 +81,11 @@ public class ColumnConfig {
 	 * 
 	 * @param filename The name of the file containing the configuration
 	 * @param logger The logger to be used
+	 * @throws ConfigException 
 	 */
-	public static void init(String filename) {
+	public static void init(String filename) throws ConfigException {
 		configFilename = filename;
+		instance = new ColumnConfig();
 	}
 
 	/**
