@@ -1,4 +1,4 @@
-package uk.ac.exeter.QCRoutines.routines;
+package uk.ac.exeter.QCRoutines.routines.Dummy;
 
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;

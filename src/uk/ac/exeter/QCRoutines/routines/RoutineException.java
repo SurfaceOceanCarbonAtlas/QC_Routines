@@ -1,4 +1,4 @@
-package uk.ac.exeter.QCRoutines;
+package uk.ac.exeter.QCRoutines.routines;
 
 public class RoutineException extends Exception {
 

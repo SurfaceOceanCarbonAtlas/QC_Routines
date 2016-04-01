@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.Routine;
-import uk.ac.exeter.QCRoutines.RoutineException;
+import uk.ac.exeter.QCRoutines.routines.Routine;
+import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 
 /**

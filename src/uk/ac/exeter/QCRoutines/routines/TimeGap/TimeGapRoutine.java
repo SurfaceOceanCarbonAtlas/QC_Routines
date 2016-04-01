@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.ac.exeter.QCRoutines.Routine;
-import uk.ac.exeter.QCRoutines.RoutineException;
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
+import uk.ac.exeter.QCRoutines.routines.Routine;
+import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 public class TimeGapRoutine extends Routine {
 
