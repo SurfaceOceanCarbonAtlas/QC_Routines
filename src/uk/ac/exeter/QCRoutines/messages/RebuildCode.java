@@ -81,10 +81,10 @@ public class RebuildCode {
 			try {
 				flagValue = Integer.parseInt(codeComponents[CODE_INDEX_FLAG_VALUE]);
 				if (!Flag.isValidFlagValue(flagValue)) {
-					throw new RebuildCodeException("Invalid severity value");
+					throw new RebuildCodeException("Invalid flag value");
 				}
 			} catch (NumberFormatException e) {
-				throw new RebuildCodeException("Unparseable severity value");
+				throw new RebuildCodeException("Unparseable flag value");
 			}
 			
 			fieldValue = codeComponents[CODE_INDEX_FIELD_VALUE];
