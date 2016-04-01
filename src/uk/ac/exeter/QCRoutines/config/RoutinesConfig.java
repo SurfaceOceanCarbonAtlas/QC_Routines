@@ -35,7 +35,7 @@ public class RoutinesConfig {
 	/**
 	 * The name of the configuration file for the sanity checks
 	 */
-	private static String itsConfigFilename = null;
+	private static String configFilename = null;
 	
 	/**
 	 * The singleton instance of this class
@@ -48,7 +48,7 @@ public class RoutinesConfig {
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
 	public RoutinesConfig() throws ConfigException {
-		if (itsConfigFilename == null) {
+		if (configFilename == null) {
 			throw new ConfigException(null, "SanityCheckConfig filename has not been set - must run init first");
 		}
 		
@@ -62,7 +62,7 @@ public class RoutinesConfig {
 	 * @param logger A logger instance
 	 */
 	public static void init(String filename) throws ConfigException {
-		itsConfigFilename = filename;
+		configFilename = filename;
 		instance = new RoutinesConfig();
 	}
 	
@@ -93,7 +93,7 @@ public class RoutinesConfig {
 	 */
 	private void readFile() throws ConfigException {
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(itsConfigFilename));
+			BufferedReader reader = new BufferedReader(new FileReader(configFilename));
 			try {
 				String line = reader.readLine();
 				int lineCount = 1;
@@ -106,10 +106,10 @@ public class RoutinesConfig {
 						// The first field is the class name. Grab it and remove
 						// it from the list, so what's left is the parameters.
 						String className = fields.remove(0);
-						String fullClassName = ROUTINE_CLASS_ROOT + className + ROUTINE_CLASS_TAIL;
+						String fullClassName = ROUTINE_CLASS_ROOT + className + "." + className + ROUTINE_CLASS_TAIL;
 
 						if (className.equalsIgnoreCase("")) {
-							throw new ConfigException(itsConfigFilename, lineCount, "Sanity Check class name cannot be empty");
+							throw new ConfigException(configFilename, lineCount, "Sanity Check class name cannot be empty");
 						} else {
 							try {
 								// Instantiate the class and call the initialise method
@@ -122,9 +122,9 @@ public class RoutinesConfig {
 								// These will be instantiated in the getInstances() method.
 								routineClasses.add(new CheckerInitData(routineClass, fields));
 							} catch(ClassNotFoundException e) {
-								throw new ConfigException(itsConfigFilename, lineCount, "Sanity check class '" + fullClassName + "' does not exist");
+								throw new ConfigException(configFilename, lineCount, "Sanity check class '" + fullClassName + "' does not exist");
 							} catch(Exception e) {
-								throw new ConfigException(itsConfigFilename, lineCount, "Error creating Sanity check class", e);
+								throw new ConfigException(configFilename, lineCount, "Error creating Sanity check class", e);
 							}
 						}
 					}
@@ -136,7 +136,7 @@ public class RoutinesConfig {
 				reader.close();
 			}
 		} catch (IOException e) {
-			throw new ConfigException(itsConfigFilename, "I/O Error while reading file", e);
+			throw new ConfigException(configFilename, "I/O Error while reading file", e);
 		}
 	}
 	
