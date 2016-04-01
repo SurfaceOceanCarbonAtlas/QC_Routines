@@ -11,42 +11,42 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for a good flag
 	 */
-	private static final int VALUE_GOOD = 2;
+	protected static final int VALUE_GOOD = 2;
 	
 	/**
 	 * The text value for a good flag
 	 */
-	private static final String TEXT_GOOD = "Good";
+	protected static final String TEXT_GOOD = "Good";
 	
 	/**
 	 * The WOCE value for a questionable flag
 	 */
-	private static final int VALUE_QUESTIONABLE = 3;
+	protected static final int VALUE_QUESTIONABLE = 3;
 	
 	/**
 	 * The text value for a questionable flag
 	 */
-	private static final String TEXT_QUESTIONABLE = "Qustionable";
+	protected static final String TEXT_QUESTIONABLE = "Questionable";
 
 	/**
 	 * The WOCE value for a bad flag
 	 */
-	private static final int VALUE_BAD = 4;
+	protected static final int VALUE_BAD = 4;
 	
 	/**
 	 * The text value for a bad flag
 	 */
-	private static final String TEXT_BAD = "Bad";
+	protected static final String TEXT_BAD = "Bad";
 
 	/**
 	 * The special value for an unset flag
 	 */
-	private static final int VALUE_NOT_SET = -1;
+	protected static final int VALUE_NOT_SET = -1;
 
 	/**
 	 * The text value for an unset flag
 	 */
-	private static final String TEXT_NOT_SET = "Not Set";
+	protected static final String TEXT_NOT_SET = "Not Set";
 
 	/**
 	 *  An instance of a Good flag
@@ -71,7 +71,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for this flag
 	 */
-	private int flagValue;
+	protected int flagValue;
 	
 	/**
 	 * Creates a Flag instance with the specified value
