@@ -1,6 +1,6 @@
 package uk.ac.exeter.QCRoutines.data;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
+import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 
 public class InvalidDataException extends DataRecordException {
 
@@ -17,11 +17,11 @@ public class InvalidDataException extends DataRecordException {
 		message.append("' is not ");
 		
 		switch(column.getDataType()) {
-		case ColumnConfig.TYPE_BOOLEAN: {
+		case ColumnConfigItem.TYPE_BOOLEAN: {
 			message.append("boolean");
 			break;
 		}
-		case ColumnConfig.TYPE_NUMERIC: {
+		case ColumnConfigItem.TYPE_NUMERIC: {
 			message.append("numeric");
 			break;
 		}

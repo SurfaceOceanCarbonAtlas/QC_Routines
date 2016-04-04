@@ -56,13 +56,13 @@ public class DataColumn {
 		if (null != value) {
 			
 			switch(columnConfig.getDataType()) {
-			case ColumnConfig.TYPE_NUMERIC: {
+			case ColumnConfigItem.TYPE_NUMERIC: {
 				if (!RoutineUtils.isNumeric(value)) {
 					throw new InvalidDataException(parent.getLineNumber(), this);
 				}
 				break;
 			}
-			case ColumnConfig.TYPE_BOOLEAN: {
+			case ColumnConfigItem.TYPE_BOOLEAN: {
 				if (!RoutineUtils.isBoolean(value)) {
 					throw new InvalidDataException(parent.getLineNumber(), this);
 				}
@@ -73,7 +73,7 @@ public class DataColumn {
 	}
 	
 	public int getColumnIndex() {
-		return columnConfig.getIndex();
+		return columnConfig.getColumnIndex();
 	}
 	
 	public String getDataType() {
