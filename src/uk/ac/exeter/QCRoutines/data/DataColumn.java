@@ -2,7 +2,6 @@ package uk.ac.exeter.QCRoutines.data;
 
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.config.FlagCascade;
 import uk.ac.exeter.QCRoutines.messages.Flag;
