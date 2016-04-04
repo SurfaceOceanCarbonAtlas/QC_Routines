@@ -1,6 +1,5 @@
 package uk.ac.exeter.QCRoutines.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,6 +12,21 @@ import uk.ac.exeter.QCRoutines.messages.InvalidFlagException;
 public class ColumnConfigItem {
 		
 	/**
+	 * The String data type identifier
+	 */
+	public static final String TYPE_STRING = "S";
+	
+	/**
+	 * The Numeric data type identifier
+	 */
+	public static final String TYPE_NUMERIC = "N";
+	
+	/**
+	 * The Boolean data type identifier
+	 */
+	public static final String TYPE_BOOLEAN = "B";
+	
+	/**
 	 * The name of the column
 	 */
 	private String columnName;
@@ -20,7 +34,7 @@ public class ColumnConfigItem {
 	/**
 	 * The index of the column in the data file
 	 */
-	private int index;
+	private int columnIndex;
 	
 	/**
 	 * The line in the configuration file that defines this column
@@ -49,22 +63,9 @@ public class ColumnConfigItem {
 	private List<FlagCascade> flagCascades = null;
 
 	
-	/**
-	 * The constructor for the output column configuration
-	 * @param columnName The column name
-	 * @param index The column index (1-based)
-	 * @param dataType The column data type
-	 * @param required Is the field required?
-	 * @param flagCascadeConfig The flag cascade configuration string
-	 */
-	public ColumnConfigItem(int configFileLine, String columnName, int index, String dataType, boolean required, String flagCascadeConfig) {
+	public ColumnConfigItem(int configFileLine, int columnIndex) {
 		this.configFileLine = configFileLine;
-		this.columnName = columnName;
-		this.index = index;
-		this.dataType = dataType;
-		this.required = required;
-		this.flagCascadeConfig = flagCascadeConfig;
-		flagCascades = new ArrayList<FlagCascade>();
+		this.columnIndex = columnIndex;
 	}
 	
 	/**
@@ -90,8 +91,8 @@ public class ColumnConfigItem {
 	 * Returns the index of this column in the data file
 	 * @return The index of this column in the data file
 	 */
-	public int getIndex() {
-		return index;
+	public int getColumnIndex() {
+		return columnIndex;
 	}
 	
 	/**
@@ -152,10 +153,39 @@ public class ColumnConfigItem {
 	}
 	
 	public boolean isNumeric() {
-		return (dataType.equals(ColumnConfig.TYPE_NUMERIC));
+		return (dataType.equals(TYPE_NUMERIC));
 	}
 	
 	public boolean isBoolean() {
-		return (dataType.equals(ColumnConfig.TYPE_BOOLEAN));
+		return (dataType.equals(TYPE_BOOLEAN));
+	}
+	
+	protected void setColumnName(String columnName) {
+		this.columnName = columnName;
+	}
+	
+	protected void setDataType(String dataType) throws InvalidDataTypeException {
+		if (!isValidDataType(dataType)) {
+			throw new InvalidDataTypeException(dataType);
+		} else {
+			this.dataType = dataType;
+		}
+	}
+	
+	protected void setRequired(boolean required) {
+		this.required = required;
+	}
+	
+	protected void setFlagCascadeConfig(String flagCascadeConfig) {
+		this.flagCascadeConfig = flagCascadeConfig;
+	}
+	
+	/**
+	 * Check that a data type string is valid
+	 * @param type The dat type string
+	 * @return {@code true} if the string is valid; {@code false} if it is not.
+	 */
+	private boolean isValidDataType(String type) {
+		return (type.equals(TYPE_STRING) || type.equals(TYPE_NUMERIC) || type.equals(TYPE_BOOLEAN)); 
 	}
 }

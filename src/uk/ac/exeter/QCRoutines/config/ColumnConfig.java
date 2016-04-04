@@ -40,27 +40,12 @@ public class ColumnConfig {
 	private static final int COL_FLAG_CASCADE = 2;
 	
 	/**
-	 * The String data type identifier
-	 */
-	public static final String TYPE_STRING = "S";
-	
-	/**
-	 * The Numeric data type identifier
-	 */
-	public static final String TYPE_NUMERIC = "N";
-	
-	/**
-	 * The Boolean data type identifier
-	 */
-	public static final String TYPE_BOOLEAN = "B";
-	
-	/**
 	 * The list of columns in the order in which they appear in the config file
 	 */
 	private List<String> columnNames;
 	
 	/**
-	 * The set of configuration items for the SOCAT columns
+	 * The set of configuration items for the columns
 	 */
 	private Map<String, ColumnConfigItem> columnConfig;
 	
@@ -69,7 +54,7 @@ public class ColumnConfig {
 	 * Must be set via {@link #init(String, Logger) before calling
 	 * {@link #getInstance()}.
 	 */
-	private static String configFilename = null;
+	protected static String configFilename = null;
 
 	/**
 	 * The singleton instance of this class.
@@ -93,7 +78,7 @@ public class ColumnConfig {
 	 * This cannot be called until after {@link ColumnConfig#init(String, Logger)} has been called.
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
-	private ColumnConfig() throws ConfigException {
+	protected ColumnConfig() throws ConfigException {
 		if (configFilename == null) {
 			throw new ConfigException(null, "SocatColumnConfig filename has not been set - must run init first");
 		}
@@ -143,32 +128,16 @@ public class ColumnConfig {
 				while (null != line) {
 					if (!RoutineUtils.isComment(line)) {
 						entryCount++;
+						
 						List<String> fields = Arrays.asList(line.split(","));
 						fields = RoutineUtils.trimList(fields);
-
-						String columnName = fields.get(COL_NAME);
-
-						if (columnNames.contains(columnName)) {
-							throw new ConfigException(configFilename, columnName, lineCount, "Item is configured more than once");
-						}
 						
-						String dataType = fields.get(COL_TYPE);
-						if (!isValidType(dataType)) {
-							throw new ConfigException(configFilename, columnName, lineCount, "Item's data type is invalid");
-						}
+						ColumnConfigItem configItem = createColumnConfigItem(lineCount, entryCount);
+						parseLine(lineCount, fields, configItem);
+						columnNames.add(configItem.getColumnName());
+						storeConfigItem(configItem);
 
-						boolean required;
-						try {
-							required = RoutineUtils.parseBoolean(fields.get(COL_REQUIRED));
-						} catch (ParseException e) {
-							throw new ConfigException(configFilename, columnName, lineCount, "Invalid boolean value");
-						}
-
-						String cascadeConfig = fields.get(COL_FLAG_CASCADE);
 						
-						ColumnConfigItem configItem = new ColumnConfigItem(lineCount, columnName, entryCount, dataType, required, cascadeConfig);
-						columnNames.add(columnName);
-						columnConfig.put(columnName, configItem);		
 					}
 
 					line = reader.readLine();
@@ -185,6 +154,42 @@ public class ColumnConfig {
 		} catch (IOException e) {
 			throw new ConfigException(configFilename, "I/O Error while reading file", e);
 		}
+	}
+	
+	protected ColumnConfigItem createColumnConfigItem(int lineCount, int entryCount) {
+		return new ColumnConfigItem(lineCount, entryCount);
+	}
+
+	protected void parseLine(int lineCount, List<String> fields, ColumnConfigItem columnConfigItem) throws ConfigException {
+		String columnName = fields.get(COL_NAME);
+
+		if (columnNames.contains(columnName)) {
+			throw new ConfigException(configFilename, columnName, lineCount, "Column is configured more than once");
+		} else {
+			columnConfigItem.setColumnName(columnName);
+		}
+		
+		String dataType = fields.get(COL_TYPE);
+		try {
+			columnConfigItem.setDataType(dataType);
+		} catch (InvalidDataTypeException e) {
+			throw new ConfigException(configFilename, columnName, lineCount, "Invalid Data Type", e);
+		}
+		
+		boolean required;
+		try {
+			required = RoutineUtils.parseBoolean(fields.get(COL_REQUIRED));
+			columnConfigItem.setRequired(required);
+		} catch (ParseException e) {
+			throw new ConfigException(configFilename, columnName, lineCount, "Invalid boolean value");
+		}
+		
+		String cascadeConfig = fields.get(COL_FLAG_CASCADE);
+		columnConfigItem.setFlagCascadeConfig(cascadeConfig);
+	}
+	
+	protected void storeConfigItem(ColumnConfigItem item) {
+		columnConfig.put(item.getColumnName(), item);
 	}
 	
 	
@@ -217,22 +222,13 @@ public class ColumnConfig {
 		for (String searchColumn : columnConfig.keySet()) {
 			
 			ColumnConfigItem columnConfigItem = columnConfig.get(searchColumn);
-			if (columnConfigItem.getIndex() == columnIndex) {
+			if (columnConfigItem.getColumnIndex() == columnIndex) {
 				columnName = searchColumn;
 				break;
 			}
 		}
 		
 		return columnName;
-	}
-	
-	/**
-	 * Check that a data type string is valid
-	 * @param type The dat type string
-	 * @return {@code true} if the string is valid; {@code false} if it is not.
-	 */
-	private boolean isValidType(String type) {
-		return (type.equals(TYPE_STRING) || type.equals(TYPE_NUMERIC) || type.equals(TYPE_BOOLEAN)); 
 	}
 	
 	/**
@@ -257,7 +253,7 @@ public class ColumnConfig {
 		
 		for (String column : columnNames) {
 			ColumnConfigItem columnConfigItem = getColumnConfig(column);
-			result.add(columnConfigItem.getIndex(), new DataColumn(record, columnConfigItem));
+			result.add(columnConfigItem.getColumnIndex(), new DataColumn(record, columnConfigItem));
 		}
 		
 		return result;
