@@ -14,7 +14,7 @@ public class BackwardsTimeMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "This record is either at the same time as or before the previous record";
 	}
 

@@ -11,7 +11,7 @@ public class HighDeltaMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return columnName + " changed by " + fieldValue + " per minute - max is " + validValue + " per minute";
 	}
 

@@ -14,7 +14,7 @@ public class TimeGapMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "Gap between measurements is " + fieldValue + " days - limit is " + validValue + " days";
 	}
 

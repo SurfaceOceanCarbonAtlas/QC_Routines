@@ -14,7 +14,7 @@ public class UnparseableNumberMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "The value '" + fieldValue + "' in column '" + columnName + "' could not be parsed  - it should be numeric";
 	}
 

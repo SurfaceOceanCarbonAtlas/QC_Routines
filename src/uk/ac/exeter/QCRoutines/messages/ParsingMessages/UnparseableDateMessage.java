@@ -13,7 +13,7 @@ public class UnparseableDateMessage extends DateTimeMessage {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "The date and/or time value '" + fieldValue + "' could not be parsed";
 	}
 

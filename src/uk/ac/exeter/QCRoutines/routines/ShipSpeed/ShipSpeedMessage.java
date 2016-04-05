@@ -14,7 +14,7 @@ public class ShipSpeedMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		StringBuffer message = new StringBuffer();
 		message.append("Ship speed between this measurement and the last is too high. Was ");
 		message.append(fieldValue);

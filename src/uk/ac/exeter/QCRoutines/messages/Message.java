@@ -88,7 +88,7 @@ public abstract class Message {
 		return new MessageKey(columnIndex, getClass());
 	}
 	
-	protected abstract String getFullMessage();
+	public abstract String getFullMessage();
 	
 	public abstract String getShortMessage();
 	

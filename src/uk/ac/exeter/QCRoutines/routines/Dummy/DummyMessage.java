@@ -14,7 +14,7 @@ public class DummyMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "This is a dummy message for column '" + columnName + "' on line " + lineNumber;
 	}
 

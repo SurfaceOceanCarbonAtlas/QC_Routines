@@ -11,7 +11,7 @@ public class OutlierMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return columnName + " standard deviation is " + fieldValue + " - limit is " + validValue;
 	}
 

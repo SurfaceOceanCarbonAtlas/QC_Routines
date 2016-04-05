@@ -17,7 +17,7 @@ public class RangeCheckMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return columnName + " value is " + fieldValue + ": should be between " + rangeMin + " and " + rangeMax;
 	}
 

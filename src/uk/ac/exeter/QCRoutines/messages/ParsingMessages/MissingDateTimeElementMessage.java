@@ -13,7 +13,7 @@ public class MissingDateTimeElementMessage extends DateTimeMessage {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return "One or more date/time elements are missing";
 	}
 

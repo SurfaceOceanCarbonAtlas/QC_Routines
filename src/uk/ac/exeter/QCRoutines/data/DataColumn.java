@@ -108,4 +108,8 @@ public class DataColumn {
 	public boolean isEmpty() {
 		return RoutineUtils.isEmpty(value);
 	}
+	
+	public boolean isRequired() {
+		return columnConfig.getRequired();
+	}
 }

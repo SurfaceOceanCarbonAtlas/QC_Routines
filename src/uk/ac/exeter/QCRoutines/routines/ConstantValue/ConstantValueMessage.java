@@ -11,7 +11,7 @@ public class ConstantValueMessage extends Message {
 	}
 
 	@Override
-	protected String getFullMessage() {
+	public String getFullMessage() {
 		return columnName + " is constant for " + fieldValue + " minutes - limit is " + validValue + " minutes";
 	}
 
