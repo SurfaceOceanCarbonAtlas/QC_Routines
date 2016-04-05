@@ -35,24 +35,28 @@ public class TimeGapRoutine extends Routine {
 	public void processRecords(List<DataRecord> records) throws RoutineException {
 		DateTime lastTime = null;
 		
-		for (DataRecord record : records) {
-			if (null != lastTime) {
-				DateTime recordTime = record.getTime();
-				if (null != recordTime) {
-					double gap = calcDayDiff(lastTime, recordTime);
-					
-					if (gap > gapLimit) {
-						try {
-							addMessage(new TimeGapMessage(record.getLineNumber(), gap, gapLimit), record);
-						} catch (DataRecordException e) {
-							throw new RoutineException("Error while adding message", e);
+		try {
+			for (DataRecord record : records) {
+				if (null != lastTime) {
+					DateTime recordTime = record.getTime();
+					if (null != recordTime) {
+						double gap = calcDayDiff(lastTime, recordTime);
+						
+						if (gap > gapLimit) {
+							try {
+								addMessage(new TimeGapMessage(record.getLineNumber(), gap, gapLimit), record);
+							} catch (DataRecordException e) {
+								throw new RoutineException("Error while adding message", e);
+							}
 						}
 					}
 				}
+			
+				// Record date ready for next record
+				lastTime = record.getTime();
 			}
-		
-			// Record date ready for next record
-			lastTime = record.getTime();
+		} catch (DataRecordException e) {
+			throw new RoutineException("Error while retrieving data", e);
 		}
 	}
 	

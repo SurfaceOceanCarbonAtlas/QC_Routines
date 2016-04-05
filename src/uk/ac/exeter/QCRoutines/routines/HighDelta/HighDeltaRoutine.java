@@ -86,6 +86,8 @@ public class HighDeltaRoutine extends Routine {
 				throw new RoutineException("Cannot check non-numeric values", e);
 			} catch (NoSuchColumnException e) {
 				throw new RoutineException("Could not find column '" + columnName + "' in record", e);
+			} catch (DataRecordException e) {
+				throw new RoutineException("Error while retrieving data", e);
 			}
 		}
 	}

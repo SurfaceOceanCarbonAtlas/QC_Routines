@@ -26,7 +26,7 @@ public abstract class DataRecord {
 	/**
 	 * The record data
 	 */
-	private List<DataColumn> data;
+	protected List<DataColumn> data;
 	
 	
 	public DataRecord(int lineNumber, ColumnConfig columnConfig) {
@@ -52,19 +52,19 @@ public abstract class DataRecord {
 	 * Returns the date/time of this record as a single object.
 	 * @return The date/time of this record.
 	 */
-	public abstract DateTime getTime();
+	public abstract DateTime getTime() throws DataRecordException;
 
 	/**
 	 * Returns the longitude of this record
 	 * @return The longitude of this record
 	 */
-	public abstract double getLongitude();
+	public abstract double getLongitude() throws DataRecordException;
 	
 	/**
 	 * Returns the latitude of this record
 	 * @return The latitude of this record
 	 */
-	public abstract double getLatitude();
+	public abstract double getLatitude() throws DataRecordException;
 	
 	/**
 	 * Populate all fields whose values are taken directly from the input data
@@ -262,5 +262,18 @@ public abstract class DataRecord {
 	
 	public DataColumn getColumn(String columnName) throws NoSuchColumnException {
 		return data.get(getColumnIndex(columnName));
+	}
+	
+	public boolean columnExists(String columnName) {
+		boolean result = false;
+		
+		for (DataColumn column : data) {
+			if (column.getName().equalsIgnoreCase(columnName)) {
+				result = true;
+				break;
+			}
+		}
+			
+		return result;
 	}
 }

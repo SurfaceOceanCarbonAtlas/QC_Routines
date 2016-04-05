@@ -120,18 +120,18 @@ public class ConstantValueRoutine extends Routine {
 		// constant value.
 		if (constantRecords.size() > 2) {
 		
-			double secondsDifference = Seconds.secondsBetween(constantRecords.get(0).getTime(), constantRecords.get(constantRecords.size() - 1).getTime()).getSeconds();
-			double minutesDifference = secondsDifference / 60.0;
-			
-			
-			if (minutesDifference > maxDuration) {
-				try {
+			try {
+				double secondsDifference = Seconds.secondsBetween(constantRecords.get(0).getTime(), constantRecords.get(constantRecords.size() - 1).getTime()).getSeconds();
+				double minutesDifference = secondsDifference / 60.0;
+				
+				
+				if (minutesDifference > maxDuration) {
 					for (DataRecord record : constantRecords) {
 						addMessage(new ConstantValueMessage(record.getLineNumber(), record.getColumn(columnName), minutesDifference, maxDuration), record);
 					}
-				} catch (DataRecordException e) {
-					throw new RoutineException("Error while adding messages to records", e);
 				}
+			} catch (DataRecordException e) {
+				throw new RoutineException("Error while checking constant duration", e);
 			}
 		}
 	}
