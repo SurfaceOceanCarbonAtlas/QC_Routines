@@ -7,27 +7,6 @@ public abstract class Message {
 	public static final int NO_COLUMN_INDEX = -999;
 	
 	public static final int NO_LINE_NUMBER = -999;
-	
-	/**
-	 * Token identifying the placeholder for the column name
-	 */
-	public static final String COLUMN_NAME_IDENTIFIER = "%c%";
-	
-	/**
-	 * Token identifying the placeholder for a field value
-	 */
-	public static final String FIELD_VALUE_IDENTIFIER = "%f%";
-	
-	/**
-	 * Token identifying the placeholder for a valid value
-	 */
-	public static final String VALID_VALUE_IDENTIFIER = "%v%";
-	
-	/**
-	 * String to be used if tokens are in the message string, but
-	 * no values are supplied to fill them.
-	 */
-	private static final String MISSING_VALUE_STRING = "MISSING_VALUE";
 
 	protected int columnIndex;
 	
@@ -109,55 +88,9 @@ public abstract class Message {
 		return new MessageKey(columnIndex, getClass());
 	}
 	
-	public String getMessageString() {
-		
-		StringBuffer result = new StringBuffer();
-		result.append(flag.toString());
-		result.append(": LINE ");
-		result.append(lineNumber);
-		result.append(": ");
-		result.append(getRecordMessage(columnName, fieldValue, validValue));
-		return result.toString();
-	}
-		
 	protected abstract String getFullMessage();
 	
 	public abstract String getShortMessage();
-	
-	/**
-	 * Generate the long form error message for this error type, substituting in
-	 * the supplied field and valid values.
-	 * 
-	 * If the message requires these values but they are not provided, the message will still
-	 * be generated but the values will be replaced with {@link #MISSING_VALUE_STRING}.
-	 * 
-	 * @param fieldValue The field value from the data file
-	 * @param validValue The expected valid value(s)
-	 * @return The message string
-	 */
-	public String getRecordMessage(String columnName, String fieldValue, String validValue) {
-		
-		String columnReplaceValue = MISSING_VALUE_STRING;
-		if (null != columnName && columnName.trim().length() > 0) {
-			columnReplaceValue = columnName.trim();
-		}
-
-		String fieldReplaceValue = MISSING_VALUE_STRING;
-		if (null != fieldValue && fieldValue.trim().length() > 0) {
-			fieldReplaceValue = fieldValue.trim();
-		}
-		
-		String validReplaceValue = MISSING_VALUE_STRING;
-		if (null != validValue && validValue.trim().length() > 0) {
-			validReplaceValue = validValue.trim();
-		}
-
-		String result = getFullMessage().replaceAll(COLUMN_NAME_IDENTIFIER, columnReplaceValue);
-		result = result.replaceAll(FIELD_VALUE_IDENTIFIER, fieldReplaceValue);
-		result = result.replaceAll(VALID_VALUE_IDENTIFIER, validReplaceValue);
-
-		return result;
-	}
 	
 	public RebuildCode getRebuildCode() throws MessageException {
 		return new RebuildCode(this);
