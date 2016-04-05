@@ -9,7 +9,7 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
 public class DataColumn {
 
-	private ColumnConfigItem columnConfig;
+	protected ColumnConfigItem columnConfig;
 	
 	private String value;
 	
@@ -103,5 +103,9 @@ public class DataColumn {
 	
 	public Flag getFlag() {
 		return flag;
+	}
+	
+	public boolean isEmpty() {
+		return RoutineUtils.isEmpty(value);
 	}
 }
