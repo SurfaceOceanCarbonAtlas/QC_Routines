@@ -4,7 +4,7 @@ package uk.ac.exeter.QCRoutines.messages;
  * Key class for organising messages. Consists of the column index
  * and message type
  */
-public class MessageKey implements Comparable<MessageKey> {
+public class MessageKey {
 
 	/**
 	 * The index of the column that messages under this key
@@ -44,15 +44,15 @@ public class MessageKey implements Comparable<MessageKey> {
 	}
 	
 	@Override
-	public int compareTo(MessageKey compare) {
+	public boolean equals(Object compare) {
 		
-		// Compare the column index first
-		int result = this.columnIndex - compare.columnIndex;
+		boolean equals = false;
 		
-		if (result == 0) {
-			result = messageClass.getName().compareTo(compare.messageClass.getName());
+		if (compare instanceof MessageKey) {
+			MessageKey compareKey = (MessageKey) compare;
+			equals = (this.messageClass.equals(compareKey.messageClass) && this.columnIndex == compareKey.columnIndex);
 		}
 		
-		return result;
+		return equals;
 	}
 }
