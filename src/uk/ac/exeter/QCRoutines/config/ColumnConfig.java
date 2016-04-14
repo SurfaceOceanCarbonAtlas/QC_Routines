@@ -32,12 +32,12 @@ public class ColumnConfig {
 	/**
 	 * The index of the column that indicates whether this entry is required
 	 */
-	private static final int COL_REQUIRED = 1;
+	private static final int COL_REQUIRED = 2;
 	
 	/**
 	 * The index of the column that contains the flag cascade configuration
 	 */
-	private static final int COL_FLAG_CASCADE = 2;
+	private static final int COL_FLAG_CASCADE = 3;
 	
 	/**
 	 * The list of columns in the order in which they appear in the config file
@@ -157,6 +157,11 @@ public class ColumnConfig {
 	}
 
 	protected void parseLine(int lineCount, List<String> fields, ColumnConfigItem columnConfigItem) throws ConfigException {
+
+		if (fields.size() < 3) {
+			throw new ConfigException(configFilename, lineCount, "Column config must contain at least 3 entries (name, type, required)");
+		}
+		
 		String columnName = fields.get(COL_NAME);
 
 		if (columnNames.contains(columnName)) {
@@ -180,8 +185,10 @@ public class ColumnConfig {
 			throw new ConfigException(configFilename, columnName, lineCount, "Invalid boolean value");
 		}
 		
-		String cascadeConfig = fields.get(COL_FLAG_CASCADE);
-		columnConfigItem.setFlagCascadeConfig(cascadeConfig);
+		if (fields.size() > 3) {
+			String cascadeConfig = fields.get(COL_FLAG_CASCADE);
+			columnConfigItem.setFlagCascadeConfig(cascadeConfig);
+		}
 	}
 	
 	protected void storeConfigItem(ColumnConfigItem item) {
