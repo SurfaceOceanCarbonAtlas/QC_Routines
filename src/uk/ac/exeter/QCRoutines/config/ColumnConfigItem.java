@@ -1,5 +1,6 @@
 package uk.ac.exeter.QCRoutines.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class ColumnConfigItem {
 	/**
 	 * The list of flag cascades for this column
 	 */
-	private List<FlagCascade> flagCascades = null;
+	private List<FlagCascade> flagCascades = new ArrayList<FlagCascade>();
 
 	
 	public ColumnConfigItem(int configFileLine, int columnIndex) {
@@ -112,7 +113,7 @@ public class ColumnConfigItem {
 		if (null != flagCascadeConfig && flagCascadeConfig.length() > 0) {
 			List<String> cascades = Arrays.asList(flagCascadeConfig.split(";"));
 			for (String cascade : cascades) {
-				List<String> cascadeFields = Arrays.asList(cascade.split("|"));
+				List<String> cascadeFields = Arrays.asList(cascade.split("\\|"));
 				if (cascadeFields.size() != 3) {
 					throw new ConfigException(columnConfig.getConfigFilename(), columnName, configFileLine, "Invalid flag cascade string");
 				} else {
