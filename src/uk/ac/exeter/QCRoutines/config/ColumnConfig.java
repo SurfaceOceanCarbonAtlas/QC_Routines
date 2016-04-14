@@ -15,7 +15,7 @@ import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
 /**
- * Holds the SOCAT Column configuration for the Sanity Checker
+ * Holds a column configuration
  */
 public class ColumnConfig {
 	
@@ -75,12 +75,12 @@ public class ColumnConfig {
 
 	/**
 	 * Initialises the column configuration config.
-	 * This cannot be called until after {@link ColumnConfig#init(String, Logger)} has been called.
+	 * This cannot be called until after {@link ColumnConfig#init(String)} has been called.
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
 	protected ColumnConfig() throws ConfigException {
 		if (configFilename == null) {
-			throw new ConfigException(null, "SocatColumnConfig filename has not been set - must run init first");
+			throw new ConfigException(null, "ColumnConfig filename has not been set - must run init first");
 		}
 		
 		columnNames = new ArrayList<String>();
@@ -111,11 +111,7 @@ public class ColumnConfig {
 	}
 	
 	/**
-	 * Reads and parses the contents of the SOCAT column config file
-	 * @param configFile The config file
-	 * @param logger The system logger
-	 * @throws IOException If the file cannot be read
-	 * @throws ConfigException If the configuration is invalid
+	 * Reads and parses the contents of the column config file
 	 */
 	private void readFile() throws ConfigException {
 		try {
@@ -194,8 +190,8 @@ public class ColumnConfig {
 	
 	
 	/**
-	 * Returns a list of the configured SOCAT data field names in file order.
-	 * @return The list of SOCAT data field names
+	 * Returns a list of the configured data field names in file order.
+	 * @return The list of data field names
 	 */
 	public List<String> getColumnList() {
 		return columnNames;

@@ -12,18 +12,18 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 
 /**
- * Represents the configuration of the sanity checkers to be run against
+ * Represents the configuration of the routines to be run against
  * input files.
  */
 public class RoutinesConfig {
 	
 	/**
-	 * The name of the package in which all sanity checker classes will be stored
+	 * The name of the package in which all routine classes will be stored
 	 */
 	private static final String ROUTINE_CLASS_ROOT = "uk.ac.exeter.QCRoutines.routines.";
 
 	/**
-	 * All sanity check class names must end with the same text
+	 * All routine class names must end with the same text
 	 */
 	private static final String ROUTINE_CLASS_TAIL = "Routine";
 
@@ -33,23 +33,23 @@ public class RoutinesConfig {
 	private List<CheckerInitData> routineClasses;
 	
 	/**
-	 * The name of the configuration file for the sanity checks
+	 * The name of the configuration file for the routines
 	 */
-	private static String configFilename = null;
+	private static String configFilename;
 	
 	/**
 	 * The singleton instance of this class
 	 */
-	private static RoutinesConfig instance = null;
+	private static RoutinesConfig instance;
 	
 	/**
-	 * Initialises the sanity checker configuration. This cannot be run
-	 * until {@link RoutinesConfig#init(String, Logger)} has been called.
+	 * Initialises the routines configuration. This cannot be run
+	 * until {@link RoutinesConfig#init(String)} has been called.
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
 	public RoutinesConfig() throws ConfigException {
 		if (configFilename == null) {
-			throw new ConfigException(null, "SanityCheckConfig filename has not been set - must run init first");
+			throw new ConfigException(null, "RoutinesConfig filename has not been set - must run init first");
 		}
 		
 		routineClasses = new ArrayList<CheckerInitData>();
@@ -57,7 +57,7 @@ public class RoutinesConfig {
 	}
 	
 	/**
-	 * Initialise the variables required to bootstrap the SanityCheckerConfig
+	 * Initialise the variables required to bootstrap the RoutinesConfig
 	 * @param filename The name of the configuration file
 	 * @param logger A logger instance
 	 */
@@ -67,9 +67,9 @@ public class RoutinesConfig {
 	}
 	
 	/**
-	 * Retrieves the singleton instance of the SanityCheckerConfig, creating it if it
+	 * Retrieves the singleton instance of the RoutinesConfig, creating it if it
 	 * does not exist
-	 * @return An instance of the SanityCheckerConfig
+	 * @return An instance of the RoutinesConfig
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
 	public static RoutinesConfig getInstance() throws ConfigException {
@@ -81,7 +81,7 @@ public class RoutinesConfig {
 	}
 	
 	/**
-	 * Destroys the singleton instance of the SanityCheckerConfig
+	 * Destroys the singleton instance of the RoutinesConfig
 	 */
 	public static void destroy() {
 		instance = null;
@@ -109,7 +109,7 @@ public class RoutinesConfig {
 						String fullClassName = ROUTINE_CLASS_ROOT + className + "." + className + ROUTINE_CLASS_TAIL;
 
 						if (className.equalsIgnoreCase("")) {
-							throw new ConfigException(configFilename, lineCount, "Sanity Check class name cannot be empty");
+							throw new ConfigException(configFilename, lineCount, "Routine class name cannot be empty");
 						} else {
 							try {
 								// Instantiate the class and call the initialise method
@@ -122,9 +122,9 @@ public class RoutinesConfig {
 								// These will be instantiated in the getInstances() method.
 								routineClasses.add(new CheckerInitData(routineClass, fields));
 							} catch(ClassNotFoundException e) {
-								throw new ConfigException(configFilename, lineCount, "Sanity check class '" + fullClassName + "' does not exist");
+								throw new ConfigException(configFilename, lineCount, "Routine check class '" + fullClassName + "' does not exist");
 							} catch(Exception e) {
-								throw new ConfigException(configFilename, lineCount, "Error creating Sanity check class", e);
+								throw new ConfigException(configFilename, lineCount, "Error creating Routine check class", e);
 							}
 						}
 					}
@@ -141,8 +141,8 @@ public class RoutinesConfig {
 	}
 	
 	/**
-	 * Returns a list containing fresh instances of all the configured sanity checker classes
-	 * @return A list containing fresh instances of all the configured sanity checker classes
+	 * Returns a list containing fresh instances of all the configured routine classes
+	 * @return A list containing fresh instances of all the configured routine classes
 	 */
 	public List<Routine> getRoutines() throws RoutineException {
 		List<Routine> checkers = new ArrayList<Routine>(routineClasses.size());
@@ -157,7 +157,7 @@ public class RoutinesConfig {
 			if (e instanceof RoutineException) {
 				throw (RoutineException) e;
 			} else {
-				throw new RoutineException("Error initialising sanity checker instance", e);
+				throw new RoutineException("Error initialising routine instance", e);
 			}
 		}
 		
@@ -165,27 +165,27 @@ public class RoutinesConfig {
 	}
 	
 	/**
-	 * A helper class to hold details of a given sanity checker.
-	 * A new instance of each sanity checker is created for each file,
+	 * A helper class to hold details of a given routine.
+	 * A new instance of each routine is created for each file,
 	 * and this class contains the details required to construct it.
 	 */
 	private class CheckerInitData {
 		
 		/**
-		 * The class of the sanity checker
+		 * The class of the routine
 		 */
 		private Class<?> checkerClass;
 		
 		/**
-		 * The parameters for the sanity checker
+		 * The parameters for the routine
 		 */
 		private List<String> params;
 		
 		/**
 		 * Builds an object containing all the details required to initialise
-		 * a given sanity checker.
-		 * @param checkerClass The class of the sanity checker
-		 * @param params The parameters for the sanity checker
+		 * a given routine.
+		 * @param checkerClass The class of the routine
+		 * @param params The parameters for the routine
 		 */
 		private CheckerInitData(Class<?> checkerClass, List<String> params) {
 			this.checkerClass = checkerClass;
