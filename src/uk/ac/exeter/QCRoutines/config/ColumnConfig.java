@@ -84,6 +84,7 @@ public class ColumnConfig {
 		}
 		
 		columnNames = new ArrayList<String>();
+		columnNames.add(null); // Column indices are 1-based, so add an empty entry here
 		columnConfig = new HashMap<String, ColumnConfigItem>();
 		readFile();
 	}
@@ -253,16 +254,19 @@ public class ColumnConfig {
 	
 	public List<DataColumn> getDataColumns(DataRecord record) {
 		List<DataColumn> result = new ArrayList<DataColumn>(columnNames.size());
+		for (int i = 0; i < columnNames.size(); i++) {
+			result.add(null);
+		}
 		
-		for (String column : columnNames) {
-			ColumnConfigItem columnConfigItem = getColumnConfig(column);
-			result.add(columnConfigItem.getColumnIndex(), new DataColumn(record, columnConfigItem));
+		for (int i = 1; i < columnNames.size(); i++) {
+			ColumnConfigItem columnConfigItem = getColumnConfig(columnNames.get(i));
+			result.set(columnConfigItem.getColumnIndex(), new DataColumn(record, columnConfigItem));
 		}
 		
 		return result;
 	}
 	
 	public int getColumnCount() {
-		return columnNames.size();
+		return columnNames.size() - 1;
 	}
 }

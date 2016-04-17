@@ -43,6 +43,7 @@ public abstract class DataRecord {
 	public DataRecord(int lineNumber, ColumnConfig columnConfig, List<String> dataFields) throws DataRecordException {
 		this.messages = new ArrayList<Message>();
 		this.lineNumber = lineNumber;
+		this.data = columnConfig.getDataColumns(this);
 
 		// Populate all the basic data columns
 		setDataValues(dataFields);
@@ -72,7 +73,7 @@ public abstract class DataRecord {
 	 * @throws DataRecordException If the data fields do not match the columns/data types of the record 
 	 */
 	protected void setDataValues(List<String> dataFields) throws DataRecordException {
-		for (int i = 0; i < dataFields.size(); i++) {
+		for (int i = 1; i < dataFields.size(); i++) {
 			
 			DataColumn column = data.get(i);
 			if (null == column) {
@@ -239,8 +240,8 @@ public abstract class DataRecord {
 	 */
 	private void clearMessages() {
 		messages = new ArrayList<Message>();
-		for (DataColumn column : data) {
-			column.resetFlag();
+		for (int i = 1; i < data.size(); i++) {
+			data.get(i).resetFlag();
 		}
 	}
 
