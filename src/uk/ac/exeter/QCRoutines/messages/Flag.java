@@ -11,7 +11,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for a good flag
 	 */
-	protected static final int VALUE_GOOD = 2;
+	public static final int VALUE_GOOD = 2;
 	
 	/**
 	 * The text value for a good flag
@@ -21,7 +21,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for a good flag
 	 */
-	protected static final int VALUE_ASSUMED_GOOD = -2;
+	public static final int VALUE_ASSUMED_GOOD = -2;
 	
 	/**
 	 * The text value for a good flag
@@ -31,7 +31,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for a questionable flag
 	 */
-	protected static final int VALUE_QUESTIONABLE = 3;
+	public static final int VALUE_QUESTIONABLE = 3;
 	
 	/**
 	 * The text value for a questionable flag
@@ -41,7 +41,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The WOCE value for a bad flag
 	 */
-	protected static final int VALUE_BAD = 4;
+	public static final int VALUE_BAD = 4;
 	
 	/**
 	 * The text value for a bad flag
@@ -51,7 +51,7 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The special value for an unset flag
 	 */
-	protected static final int VALUE_NOT_SET = -1000;
+	public static final int VALUE_NOT_SET = -1000;
 
 	/**
 	 * The text value for an unset flag
@@ -61,12 +61,16 @@ public class Flag implements Comparable<Flag> {
 	/**
 	 * The special value for an unset flag
 	 */
-	protected static final int VALUE_NEEDED = -1001;
+	public static final int VALUE_NEEDED = -1001;
 
 	/**
 	 * The text value for an unset flag
 	 */
 	protected static final String TEXT_NEEDED = "Needed";
+	
+	public static final int VALUE_IGNORED = -1002;
+	
+	protected static final String TEXT_IGNORED = "Ignored";
 
 	/**
 	 *  An instance of a Good flag
