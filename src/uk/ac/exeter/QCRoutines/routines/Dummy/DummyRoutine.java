@@ -16,20 +16,15 @@ public class DummyRoutine extends Routine {
 	
 	@Override
 	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
-		System.out.println("Dummy routine initialised with parameter '" + parameters.get(0) + "'");
-		
+		// Nothing to do
 	}
 
 	@Override
 	public void processRecords(List<DataRecord> records) throws RoutineException {
-		
-		System.out.println("Dummy QC Routine was passed " + records.size() + " records");
 
 		// We make messages for groups of records, assuming they exist.
-		// The first five records get warnings on the 1st column. The second five get errors on the 2nd column.
-		// The third five get both.
 		
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 500; i++) {
 			
 			if (i < records.size()) {
 				try {
@@ -40,7 +35,7 @@ public class DummyRoutine extends Routine {
 			}
 		}
 
-		for (int i = 6; i <= 10; i++) {
+		for (int i = 501; i <= 1003; i++) {
 			if (i < records.size()) {
 				try {
 					addMessage(new DummyMessage(records.get(i).getLineNumber(), 2, "Col2", Flag.BAD, records.get(i).getValue(1)), records.get(i));
