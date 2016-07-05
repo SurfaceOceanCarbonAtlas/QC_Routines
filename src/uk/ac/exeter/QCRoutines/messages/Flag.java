@@ -102,6 +102,8 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public static final Flag NEEDED = makeNeededFlag();
 	
+	public static final Flag IGNORED = makeIgnoredFlag();
+	
 	/**
 	 * The WOCE value for this flag
 	 */
@@ -159,6 +161,10 @@ public class Flag implements Comparable<Flag> {
 			result = TEXT_NEEDED;
 			break;
 		}
+		case VALUE_IGNORED: {
+			result = TEXT_IGNORED;
+			break;
+		}
 		default: {
 			// This should never happen!
 			result = "***INVALID FLAG VALUE***";
@@ -176,7 +182,7 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public static boolean isValidFlagValue(int value) {
 		return (value == VALUE_GOOD || value == VALUE_ASSUMED_GOOD || value == VALUE_QUESTIONABLE || 
-				value == VALUE_BAD || value == VALUE_NOT_SET || value == VALUE_NEEDED);
+				value == VALUE_BAD || value == VALUE_NOT_SET || value == VALUE_NEEDED || value == VALUE_IGNORED);
 	}
 	
 	/**
@@ -262,6 +268,17 @@ public class Flag implements Comparable<Flag> {
 		Flag flag = null;
 		try {
 			flag = new Flag(VALUE_NEEDED);
+		} catch (InvalidFlagException e) {
+			// This won't be thrown; do nothing
+		}
+		
+		return flag;
+	}
+	
+	private static Flag makeIgnoredFlag() {
+		Flag flag = null;
+		try {
+			flag = new Flag(VALUE_IGNORED);
 		} catch (InvalidFlagException e) {
 			// This won't be thrown; do nothing
 		}
