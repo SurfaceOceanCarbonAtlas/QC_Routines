@@ -44,7 +44,7 @@ public class TimeGapRoutine extends Routine {
 						
 						if (gap > gapLimit) {
 							try {
-								addMessage(new TimeGapMessage(record.getLineNumber(), gap, gapLimit), record);
+								addMessage(new TimeGapMessage(record, gap, gapLimit), record);
 							} catch (DataRecordException e) {
 								throw new RoutineException("Error while adding message", e);
 							}

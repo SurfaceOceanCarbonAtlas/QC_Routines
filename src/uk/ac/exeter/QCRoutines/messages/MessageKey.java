@@ -1,5 +1,7 @@
 package uk.ac.exeter.QCRoutines.messages;
 
+import java.util.Set;
+
 /**
  * Key class for organising messages. Consists of the column index
  * and message type
@@ -10,7 +12,7 @@ public class MessageKey {
 	 * The index of the column that messages under this key
 	 * refer to
 	 */
-	private int columnIndex;
+	private Set<Integer> columnIndices;
 	
 	/**
 	 * The type of the messages referred to by this key
@@ -22,8 +24,8 @@ public class MessageKey {
 	 * @param columnIndex The column index
 	 * @param messageType The message type
 	 */
-	public MessageKey(int columnIndex, Class<?> messageClass) {
-		this.columnIndex = columnIndex;
+	public MessageKey(Set<Integer> columnIndices, Class<?> messageClass) {
+		this.columnIndices = columnIndices;
 		this.messageClass = messageClass;
 	}
 	
@@ -31,8 +33,8 @@ public class MessageKey {
 	 * Return the column index
 	 * @return The column index
 	 */
-	public int getColumnIndex() {
-		return columnIndex;
+	public Set<Integer> getColumnIndices() {
+		return columnIndices;
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class MessageKey {
 		
 		if (compare instanceof MessageKey) {
 			MessageKey compareKey = (MessageKey) compare;
-			equals = (this.messageClass.equals(compareKey.messageClass) && this.columnIndex == compareKey.columnIndex);
+			equals = (this.messageClass.equals(compareKey.messageClass) && this.columnIndices.equals(compareKey.columnIndices));
 		}
 		
 		return equals;

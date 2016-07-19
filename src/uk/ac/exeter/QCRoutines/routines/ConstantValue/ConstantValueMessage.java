@@ -1,5 +1,7 @@
 package uk.ac.exeter.QCRoutines.routines.ConstantValue;
 
+import java.util.TreeSet;
+
 import uk.ac.exeter.QCRoutines.data.DataColumn;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
@@ -7,8 +9,8 @@ import uk.ac.exeter.QCRoutines.messages.MessageException;
 
 public class ConstantValueMessage extends Message {
 
-	public ConstantValueMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
-		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
+	public ConstantValueMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
 	public ConstantValueMessage(int lineNumber, DataColumn dataColumn, double constantTime, double maxConstantTime) throws MessageException {
@@ -17,12 +19,12 @@ public class ConstantValueMessage extends Message {
 
 	@Override
 	public String getFullMessage() {
-		return columnName + " is constant for " + fieldValue + " minutes - limit is " + validValue + " minutes";
+		return getColumnNamesAsString() + " is constant for " + fieldValue + " minutes - limit is " + validValue + " minutes";
 	}
 
 	@Override
 	public String getShortMessage() {
-		return columnName + " constant for too long";
+		return getColumnNamesAsString() + " constant for too long";
 	}
 
 }

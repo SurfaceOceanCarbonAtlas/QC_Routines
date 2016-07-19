@@ -1,20 +1,20 @@
 package uk.ac.exeter.QCRoutines.routines.ShipSpeed;
 
+import java.util.TreeSet;
+
+import uk.ac.exeter.QCRoutines.data.DataRecord;
+import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
 
 public class ShipSpeedMessage extends Message {
 
-	public static final int SHIP_SPEED_COLUMN_INDEX = -1;
-	
-	public static final String SHIP_SPEED_COLUMN_NAME = "Lon/Lat/Date/Time";
-	
-	public ShipSpeedMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
-		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
+	public ShipSpeedMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
-	public ShipSpeedMessage(int lineNumber, Flag flag, String fieldValue, String validValue) {
-		super(lineNumber, SHIP_SPEED_COLUMN_INDEX, SHIP_SPEED_COLUMN_NAME, flag, fieldValue, validValue);
+	public ShipSpeedMessage(DataRecord record, Flag flag, String fieldValue, String validValue) throws NoSuchColumnException {
+		super(record.getLineNumber(), getShipSpeedColumnIndices(record), record.getColumnNames(getShipSpeedColumnIndices(record)), flag, fieldValue, validValue);
 	}
 
 	@Override
@@ -32,6 +32,14 @@ public class ShipSpeedMessage extends Message {
 	@Override
 	public String getShortMessage() {
 		return "Ship speed too high";
+	}
+	
+	private static TreeSet<Integer> getShipSpeedColumnIndices(DataRecord record) {
+		@SuppressWarnings("unchecked")
+		TreeSet<Integer> columnIndices = (TreeSet<Integer>) record.getDateTimeColumns().clone();
+		columnIndices.add(record.getLongitudeColumn());
+		columnIndices.add(record.getLatitudeColumn());
+		return columnIndices;
 	}
 
 }

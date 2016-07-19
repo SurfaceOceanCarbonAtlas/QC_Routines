@@ -2,6 +2,7 @@ package uk.ac.exeter.QCRoutines.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
@@ -56,16 +57,34 @@ public abstract class DataRecord {
 	public abstract DateTime getTime() throws DataRecordException;
 
 	/**
+	 * Returns the list of column indices for the date and time values in the record
+	 * @return The indices of the date/time column(s)
+	 */
+	public abstract TreeSet<Integer> getDateTimeColumns();
+	
+	/**
 	 * Returns the longitude of this record
 	 * @return The longitude of this record
 	 */
 	public abstract double getLongitude() throws DataRecordException;
 	
 	/**
+	 * Returns the index of the longitude column
+	 * @return The longitude column index
+	 */
+	public abstract int getLongitudeColumn();
+	
+	/**
 	 * Returns the latitude of this record
 	 * @return The latitude of this record
 	 */
 	public abstract double getLatitude() throws DataRecordException;
+	
+	/**
+	 * Returns the index of the latitude column
+	 * @return The latitude column index
+	 */
+	public abstract int getLatitudeColumn();
 	
 	/**
 	 * Populate all fields whose values are taken directly from the input data
@@ -122,6 +141,14 @@ public abstract class DataRecord {
 		}
 
 		return column.getName();
+	}
+	
+	public TreeSet<String> getColumnNames(TreeSet<Integer> columnIndices) throws NoSuchColumnException {
+		TreeSet<String> columnNames = new TreeSet<String>();
+		for (int columnIndex : columnIndices) {
+			columnNames.add(getColumnName(columnIndex));
+		}
+		return columnNames;
 	}
 	
 	/**
@@ -204,12 +231,16 @@ public abstract class DataRecord {
 	 * @throws NoSuchColumnException 
 	 */
 	public void addMessage(Message message) throws NoSuchColumnException {
-		DataColumn column = data.get(message.getColumnIndex());
-		if (null == column) {
-			throw new NoSuchColumnException(lineNumber, message.getColumnIndex());
+		
+		for (int columnIndex : message.getColumnIndices()) {
+			DataColumn column = data.get(columnIndex);
+			if (null == column) {
+				throw new NoSuchColumnException(lineNumber, columnIndex);
+			}
+			column.setFlag(message.getFlag());
 		}
+
 		messages.add(message);
-		column.setFlag(message.getFlag());
 	}
 
 	/**

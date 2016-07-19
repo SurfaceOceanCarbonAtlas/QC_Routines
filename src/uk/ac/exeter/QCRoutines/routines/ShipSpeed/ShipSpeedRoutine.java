@@ -63,13 +63,13 @@ public class ShipSpeedRoutine extends Routine {
 						double hourDiff = calcHourDiff(lastTime, thisTime);
 						
 						if (hourDiff <= 0.0) {
-							addMessage(new BackwardsTimeMessage(currentRecord.getLineNumber()), currentRecord);
+							addMessage(new BackwardsTimeMessage(currentRecord), currentRecord);
 						} else if (calcSecondsDiff(lastTime, thisTime) > 1) {
 							double speed = distance / hourDiff;
 							if (speed > badSpeedLimit) {
-								addMessage(new ShipSpeedMessage(currentRecord.getLineNumber(), Flag.BAD, String.valueOf(speed), String.valueOf(badSpeedLimit)), currentRecord);
+								addMessage(new ShipSpeedMessage(currentRecord, Flag.BAD, String.valueOf(speed), String.valueOf(badSpeedLimit)), currentRecord);
 							} else if (speed > questionableSpeedLimit) {
-								addMessage(new ShipSpeedMessage(currentRecord.getLineNumber(), Flag.QUESTIONABLE, String.valueOf(speed), String.valueOf(questionableSpeedLimit)), currentRecord);
+								addMessage(new ShipSpeedMessage(currentRecord, Flag.QUESTIONABLE, String.valueOf(speed), String.valueOf(questionableSpeedLimit)), currentRecord);
 							}
 						}
 					}

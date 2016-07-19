@@ -1,5 +1,11 @@
 package uk.ac.exeter.QCRoutines.messages;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Set;
+import java.util.TreeSet;
+
 import uk.ac.exeter.QCRoutines.data.DataColumn;
 
 /**
@@ -21,9 +27,9 @@ public abstract class Message {
 	
 	public static final int NO_LINE_NUMBER = -999;
 
-	protected int columnIndex;
+	protected TreeSet<Integer> columnIndices;
 	
-	protected String columnName;
+	protected TreeSet<String> columnNames;
 	
 	private Flag flag;
 	
@@ -33,10 +39,10 @@ public abstract class Message {
 	
 	protected String validValue;
 	
-	public Message(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+	public Message(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		this.lineNumber = lineNumber;
-		this.columnIndex = columnIndex;
-		this.columnName = columnName;
+		this.columnIndices = columnIndices;
+		this.columnNames = columnNames;
 		this.flag = flag;
 		this.fieldValue = fieldValue;
 		this.validValue = validValue;
@@ -44,28 +50,51 @@ public abstract class Message {
 		// Note that we don't need to check the basic constructor here, because this is it!
 	}
 	
+	public Message(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) throws MessageException {
+		this.lineNumber = lineNumber;
+
+		columnIndices = new TreeSet<Integer>();
+		columnIndices.add(columnIndex);
+
+		columnNames = new TreeSet<String>();
+		columnNames.add(columnName);
+
+		this.flag = flag;
+		this.fieldValue = fieldValue;
+		this.validValue = validValue;
+		
+		checkBasicConstructor(getClass());
+	}
 	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String validValue) throws MessageException {
 		this.lineNumber = lineNumber;
-		this.columnIndex = dataColumn.getColumnIndex();
-		this.columnName = dataColumn.getName();
+		
+		columnIndices = new TreeSet<Integer>();
+		columnIndices.add(dataColumn.getColumnIndex());
+
+		columnNames = new TreeSet<String>();
+		columnNames.add(dataColumn.getName());
+		
 		this.flag = flag;
 		this.fieldValue = dataColumn.getValue();
 		this.validValue = validValue;
-		if (!hasBasicConstructor()) {
-			throw new MessageException("Message class " + this.getClass().getName() + " is missing the basic constructor");
-		}
+		
+		checkBasicConstructor(getClass());
 	}
 	
 	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String fieldValue, String validValue) throws MessageException {
 		this.lineNumber = lineNumber;
-		this.columnIndex = dataColumn.getColumnIndex();
-		this.columnName = dataColumn.getName();
+		
+		columnIndices = new TreeSet<Integer>();
+		columnIndices.add(dataColumn.getColumnIndex());
+
+		columnNames = new TreeSet<String>();
+		columnNames.add(dataColumn.getName());
+
 		this.flag = flag;
 		this.fieldValue = fieldValue;
 		this.validValue = validValue;
-		if (!hasBasicConstructor()) {
-			throw new MessageException("Message class " + this.getClass().getName() + " is missing the basic constructor");
-		}
+		
+		checkBasicConstructor(getClass());
 	}
 	
 	/**
@@ -77,18 +106,38 @@ public abstract class Message {
 	}
 	
 	/**
-	 * Returns the column index for which this message was raised.
-	 * @return The column index for which this message was raised.
+	 * Returns the column indices for which this message was raised.
+	 * @return The column indices for which this message was raised.
 	 */
-	public int getColumnIndex() {
-		return columnIndex;
+	public TreeSet<Integer> getColumnIndices() {
+		return columnIndices;
 	}
 
 	/**
-	 * @return the name of the column for which this message was raised.
+	 * Returns the column names for which this message was raised
+	 * @return the name of the column(s) for which this message was raised.
 	 */
-	public String getColumnName() {
-		return columnName;
+	public TreeSet<String> getColumnNames() {
+		return columnNames;
+	}
+	
+	/**
+	 * Returns the list of column names as a String, with names separated by '/'
+	 * @return The list of column names
+	 */
+	public String getColumnNamesAsString() {
+		StringBuffer result = new StringBuffer();
+		
+		int nameCount = 0;
+		for (String columnName : columnNames) {
+			nameCount++;
+			result.append(columnName);
+			if (nameCount < columnNames.size()) {
+				result.append('|');
+			}
+		}
+		
+		return result.toString();
 	}
 
 	/**
@@ -106,7 +155,7 @@ public abstract class Message {
 	 * @return The {@link MessageKey} object for this message 
 	 */
 	public MessageKey generateMessageKey() {
-		return new MessageKey(columnIndex, getClass());
+		return new MessageKey(columnIndices, getClass());
 	}
 	
 	public abstract String getFullMessage();
@@ -136,8 +185,8 @@ public abstract class Message {
 			equals = false;
 		} else {
 			Message compare = (Message) o;
-			if (compare.columnIndex != columnIndex ||
-					!compare.columnName.equals(columnName) ||
+			if (!compare.columnIndices.equals(columnIndices) ||
+					!compare.columnNames.equals(columnNames) ||
 					!compare.flag.equals(flag) ||
 					compare.lineNumber != lineNumber ||
 					!compare.fieldValue.equals(fieldValue) ||
@@ -149,16 +198,38 @@ public abstract class Message {
 		return equals;
 	}
 	
-	private boolean hasBasicConstructor() {
+	protected static void checkBasicConstructor(Class<? extends Message> messageClass) throws MessageException {
 		
 		boolean hasConstructor = true;
 		
 		try {
-			this.getClass().getConstructor(int.class, int.class, String.class, Flag.class, String.class, String.class);
+			Constructor<?> constructor = messageClass.getConstructor(int.class, Set.class, Set.class, Flag.class, String.class, String.class);
+			
+			// Check that the Set is for Integers
+			Type[] constructorGenericTypes = constructor.getGenericParameterTypes();
+			if (constructorGenericTypes.length != 6) {
+				hasConstructor = false;
+			} else {
+				if (!(constructorGenericTypes[1] instanceof ParameterizedType)) {
+					hasConstructor = false;
+				} else {
+					Type[] actualTypeArguments = ((ParameterizedType) constructorGenericTypes[1]).getActualTypeArguments();
+					if (actualTypeArguments.length != 1) {
+						hasConstructor = false;
+					} else {
+						Class<?> typeArgumentClass = (Class<?>) actualTypeArguments[0];
+						if (!typeArgumentClass.equals(Integer.class)) {
+							hasConstructor = false;
+						}
+					}
+				}
+			}
 		} catch (NoSuchMethodException e) {
 			hasConstructor = false;
 		}
 		
-		return hasConstructor;
+		if (!hasConstructor) {
+			throw new MessageException("Message class " + messageClass.getName() + " is missing the basic constructor");
+		}
 	}
 }
