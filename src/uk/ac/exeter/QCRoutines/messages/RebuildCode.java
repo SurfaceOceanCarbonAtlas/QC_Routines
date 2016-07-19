@@ -150,7 +150,7 @@ public class RebuildCode {
 	
 	public Message getMessage() throws MessageException {
 		try {
-			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, Set.class, Set.class, Flag.class, String.class, String.class);
+			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
 			return (Message) messageConstructor.newInstance(lineNumber, columnIndices, columnNames, new Flag(flagValue), fieldValue, validValue);
 		} catch (Exception e) {
 			throw new MessageException("Error while constructing message object from rebuild code", e);
