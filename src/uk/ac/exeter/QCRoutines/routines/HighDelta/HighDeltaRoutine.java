@@ -10,6 +10,7 @@ import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
+import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
@@ -88,6 +89,8 @@ public class HighDeltaRoutine extends Routine {
 				throw new RoutineException("Could not find column '" + columnName + "' in record", e);
 			} catch (DataRecordException e) {
 				throw new RoutineException("Error while retrieving data", e);
+			} catch (MessageException e) {
+				throw new RoutineException("Error while generating QC message", e);
 			}
 		}
 	}

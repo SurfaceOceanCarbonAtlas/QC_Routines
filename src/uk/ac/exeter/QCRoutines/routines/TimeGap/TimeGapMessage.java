@@ -9,6 +9,10 @@ public class TimeGapMessage extends Message {
 	
 	public static final String DATE_TIME_COLUMN_NAME = "Date/Time";
 	
+	public TimeGapMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
+	}
+
 	public TimeGapMessage(int lineNumber, double gap, double gapLimit) {
 		super(lineNumber, DATE_TIME_COLUMN_INDEX, DATE_TIME_COLUMN_NAME, Flag.BAD, String.valueOf(gap), String.valueOf(gapLimit));
 	}

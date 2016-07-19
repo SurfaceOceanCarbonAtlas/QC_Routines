@@ -9,6 +9,10 @@ public class ShipSpeedMessage extends Message {
 	
 	public static final String SHIP_SPEED_COLUMN_NAME = "Lon/Lat/Date/Time";
 	
+	public ShipSpeedMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
+	}
+
 	public ShipSpeedMessage(int lineNumber, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, SHIP_SPEED_COLUMN_INDEX, SHIP_SPEED_COLUMN_NAME, flag, fieldValue, validValue);
 	}

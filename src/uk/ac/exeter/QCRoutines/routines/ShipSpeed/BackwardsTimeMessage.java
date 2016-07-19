@@ -9,6 +9,10 @@ public class BackwardsTimeMessage extends Message {
 	
 	public static final String DATE_TIME_COLUMN_NAME = "Date/Time";
 	
+	public BackwardsTimeMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) {
+		super(lineNumber, columnIndex, columnName, flag, fieldValue, validValue);
+	}
+
 	public BackwardsTimeMessage(int lineNumber) {
 		super(lineNumber, DATE_TIME_COLUMN_INDEX, DATE_TIME_COLUMN_NAME, Flag.BAD, null, null);
 	}

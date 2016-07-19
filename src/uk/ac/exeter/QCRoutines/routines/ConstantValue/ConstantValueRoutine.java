@@ -10,9 +10,20 @@ import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
+import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * QC Routine to determine whether or not a given column's value has been constant
+ * for longer than a specified time period.
+ * 
+ * The routine ignores {@code null} values - it assumes that these are not constant.
+ * This prevents issues where sensors are offline.
+ * 
+ * @author zuj007
+ *
+ */
 public class ConstantValueRoutine extends Routine {
 
 	/**
@@ -82,7 +93,7 @@ public class ConstantValueRoutine extends Routine {
 	
 	/**
 	 * Determines whether or not the value in the passed record is identical to that
-	 * in the list of constant records
+	 * in the list of constant records. Null values always return a 'not constant' result.
 	 * @param record The record to be checked
 	 * @return {@code true} if the value in the record equals that in the list of constant records; {@code false} otherwise.
 	 * @throws SanityCheckException If the value cannot be compared.
@@ -92,10 +103,16 @@ public class ConstantValueRoutine extends Routine {
 		boolean result = false;
 		
 		try {
-			double currentValue = Double.parseDouble(firstRecord.getValue(columnName));
-			double recordValue = Double.parseDouble(record.getValue(columnName));
+			String firstRecordStringValue = firstRecord.getValue(columnName);
+			String recordStringValue = record.getValue(columnName);
 			
-			result = (currentValue == recordValue);
+			// Any null values are treated as not constant, so we skip the check
+			if (null != firstRecordStringValue && null != recordStringValue) {
+				double currentValue = Double.parseDouble(firstRecordStringValue);
+				double recordValue = Double.parseDouble(recordStringValue);
+				
+				result = (currentValue == recordValue);
+			}
 		} catch (NumberFormatException e) {
 			throw new RoutineException("Cannot compare non-numeric values", e);
 		} catch (NoSuchColumnException e) {
@@ -132,6 +149,8 @@ public class ConstantValueRoutine extends Routine {
 				}
 			} catch (DataRecordException e) {
 				throw new RoutineException("Error while checking constant duration", e);
+			} catch (MessageException e) {
+				throw new RoutineException("Error while generating QC message", e);
 			}
 		}
 	}

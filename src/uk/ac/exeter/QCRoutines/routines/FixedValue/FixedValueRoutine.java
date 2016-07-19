@@ -8,6 +8,7 @@ import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
+import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
@@ -62,6 +63,8 @@ public class FixedValueRoutine extends Routine {
 							addMessage(new ValueNotFixedMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, firstValue), record);
 						} catch (DataRecordException e) {
 							throw new RoutineException("Error while adding message", e);
+						} catch (MessageException e) {
+							throw new RoutineException("Error while generating QC message", e);
 						}
 					}
 				}
