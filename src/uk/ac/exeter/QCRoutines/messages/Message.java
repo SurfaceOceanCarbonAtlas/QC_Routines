@@ -3,7 +3,6 @@ package uk.ac.exeter.QCRoutines.messages;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Set;
 import java.util.TreeSet;
 
 import uk.ac.exeter.QCRoutines.data.DataColumn;
