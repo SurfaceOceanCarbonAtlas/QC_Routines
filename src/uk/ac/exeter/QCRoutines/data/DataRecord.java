@@ -134,7 +134,9 @@ public abstract class DataRecord {
 		
 		int result = -1;
 		
-		for (DataColumn column : data) {
+		// The zeroth column is always empty
+		for (int i = 1; i < data.size(); i++) {
+			DataColumn column = data.get(i);
 			if (column.getName().equals(columnName)) {
 				result = column.getColumnIndex();
 				break;
