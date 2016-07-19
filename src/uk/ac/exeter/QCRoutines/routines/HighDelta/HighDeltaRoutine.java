@@ -59,29 +59,35 @@ public class HighDeltaRoutine extends Routine {
 		
 			try {
 				if (lastValue == NO_VALUE) {
-					lastValue = Double.parseDouble(record.getValue(columnName));
-					lastTime = record.getTime();
+					String lastValueString = record.getValue(columnName);
+					if (null != lastValueString) {
+						lastValue = Double.parseDouble(lastValueString);
+						lastTime = record.getTime();
+					}
 				} else {
 					
 					// Calculate the change between this record and the previous one
-					double thisValue = Double.parseDouble(record.getValue(columnName));
-					DateTime thisTime = record.getTime();
-					
-					double minutesDifference = Seconds.secondsBetween(lastTime, thisTime).getSeconds() / 60.0;
-					double valueDelta = Math.abs(thisValue - lastValue);
-					
-					double deltaPerMinute = valueDelta / minutesDifference;
-					if (deltaPerMinute > maxDelta) {
-						try {
-							addMessage(new HighDeltaMessage(record.getLineNumber(), record.getColumn(columnName), deltaPerMinute, maxDelta), record);
-						} catch (DataRecordException e) {
-							throw new RoutineException ("Error while adding message", e);
+					String thisStringValue = record.getValue(columnName);
+					if (null != thisStringValue) {
+						double thisValue = Double.parseDouble(thisStringValue);
+						DateTime thisTime = record.getTime();
+						
+						double minutesDifference = Seconds.secondsBetween(lastTime, thisTime).getSeconds() / 60.0;
+						double valueDelta = Math.abs(thisValue - lastValue);
+						
+						double deltaPerMinute = valueDelta / minutesDifference;
+						if (deltaPerMinute > maxDelta) {
+							try {
+								addMessage(new HighDeltaMessage(record.getLineNumber(), record.getColumn(columnName), deltaPerMinute, maxDelta), record);
+							} catch (DataRecordException e) {
+								throw new RoutineException ("Error while adding message", e);
+							}
 						}
+					
+					
+						lastValue = thisValue;
+						lastTime = thisTime;
 					}
-					
-					
-					lastValue = thisValue;
-					lastTime = thisTime;
 				}
 			} catch (NumberFormatException e) {
 				throw new RoutineException("Cannot check non-numeric values", e);

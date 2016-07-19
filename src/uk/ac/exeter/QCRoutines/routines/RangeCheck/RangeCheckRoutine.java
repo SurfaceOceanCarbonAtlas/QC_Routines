@@ -76,12 +76,16 @@ public class RangeCheckRoutine extends Routine {
 
 		for (DataRecord record : records) {
 			try {
-				double value = Double.parseDouble(record.getValue(columnName));
-				if (!Double.isNaN(value)) {
-					if (hasBadRange && (value < badMin || value > badMax)) {
-						addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, value, badMin, badMax), record);
-					} else if (hasQuestionableRange && (value < questionableMin || value > questionableMax)) {
-						addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.QUESTIONABLE, value, questionableMin, questionableMax), record);
+				String valueString = record.getValue(columnName);
+				
+				if (null != valueString) {
+					double value = Double.parseDouble(valueString);
+					if (!Double.isNaN(value)) {
+						if (hasBadRange && (value < badMin || value > badMax)) {
+							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, value, badMin, badMax), record);
+						} else if (hasQuestionableRange && (value < questionableMin || value > questionableMax)) {
+							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.QUESTIONABLE, value, questionableMin, questionableMax), record);
+						}
 					}
 				}
 			} catch(NumberFormatException e) {

@@ -56,17 +56,20 @@ public class OutlierRoutine extends Routine {
 		
 		for (DataRecord record : records) {
 			try {
-				double value = Double.parseDouble(record.getValue(columnName));
-				if (!Double.isNaN(value)) {
-					valueCount++;
-					recordValues.add(new RecordValue(record, value));
-					
-					if (valueCount == 1) {
-						mean = value;
-					} else {
-						double d = value - mean;
-						stdev += (valueCount - 1)*d*d/valueCount;
-						mean += d/valueCount;
+				String valueString = record.getValue(columnName);
+				if (null != valueString) {
+					double value = Double.parseDouble(valueString);
+					if (!Double.isNaN(value)) {
+						valueCount++;
+						recordValues.add(new RecordValue(record, value));
+						
+						if (valueCount == 1) {
+							mean = value;
+						} else {
+							double d = value - mean;
+							stdev += (valueCount - 1)*d*d/valueCount;
+							mean += d/valueCount;
+						}
 					}
 				}
 			} catch(NumberFormatException e) {
