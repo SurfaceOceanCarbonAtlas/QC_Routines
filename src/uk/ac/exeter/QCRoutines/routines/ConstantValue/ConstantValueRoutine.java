@@ -96,7 +96,7 @@ public class ConstantValueRoutine extends Routine {
 	 * in the list of constant records. Null values always return a 'not constant' result.
 	 * @param record The record to be checked
 	 * @return {@code true} if the value in the record equals that in the list of constant records; {@code false} otherwise.
-	 * @throws SanityCheckException If the value cannot be compared.
+	 * @throws RoutineException If the value cannot be compared.
 	 */
 	private boolean equalsConstant(DataRecord record, DataRecord firstRecord) throws RoutineException {
 
@@ -125,7 +125,7 @@ public class ConstantValueRoutine extends Routine {
 	/**
 	 * See how long the value has been constant in the set of stored records.
 	 * If the value is constant for longer than the maximum time, flag each record accordingly.
-	 * @throws SanityCheckException If the records cannot be flagged.
+	 * @throws RoutineException If the records cannot be flagged.
 	 */
 	private void doDurationCheck(List<DataRecord> constantRecords) throws RoutineException {
 

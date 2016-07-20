@@ -9,8 +9,8 @@ import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Message;
 
 /**
- * The base class for a Sanity Check routine. These classes will be called
- * to sanity check the data after it's been read and processed for missing/
+ * The base class for a QC routine. These classes will be called
+ * to check the data after it's been read and processed for missing/
  * out of range values.
  */
 public abstract class Routine {
@@ -29,7 +29,7 @@ public abstract class Routine {
 	
 	/**
 	 * Initialise the checker and check that the supplied fields are valid
-	 * @param parameters The parameters for the sanity check
+	 * @param parameters The parameters for the routine
 	 * @param columnConfig The column configuration for the data records
 	 * @throws RoutineException
 	 */
@@ -37,7 +37,7 @@ public abstract class Routine {
 	
 	/**
 	 * Processes a single record from the input data file.
-	 * These sanity checkers will be passed each record in turn.
+	 * These routines will be passed each record in turn.
 	 * @param messages The output messages
 	 * @param record The record
 	 */
