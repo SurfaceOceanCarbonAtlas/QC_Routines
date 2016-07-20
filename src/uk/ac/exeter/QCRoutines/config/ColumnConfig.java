@@ -167,6 +167,8 @@ public class ColumnConfig {
 
 		if (columnNames.contains(columnName)) {
 			throw new ConfigException(configFilename, columnName, lineCount, "Column is configured more than once");
+		} else if (columnName.indexOf('_') >= 0) {
+			throw new ConfigException(configFilename, lineCount, "Column names cannot contain the underscore character");
 		} else {
 			columnConfigItem.setColumnName(columnName);
 		}
