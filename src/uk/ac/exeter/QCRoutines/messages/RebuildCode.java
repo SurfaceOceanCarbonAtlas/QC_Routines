@@ -74,7 +74,7 @@ public class RebuildCode {
 			try {
 				columnIndices = new TreeSet<Integer>();
 				
-				String[] indices = codeComponents[CODE_INDEX_COLUMN_INDEX].split("|");
+				String[] indices = codeComponents[CODE_INDEX_COLUMN_INDEX].split("\\|");
 				for (String indexString : indices) {
 					int columnIndex = Integer.parseInt(indexString);
 					if (columnIndex < 0) {
@@ -89,7 +89,7 @@ public class RebuildCode {
 			}
 			
 			
-			columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("|")));
+			columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("\\|")));
 			
 			try {
 				flagValue = Integer.parseInt(codeComponents[CODE_INDEX_FLAG_VALUE]);
