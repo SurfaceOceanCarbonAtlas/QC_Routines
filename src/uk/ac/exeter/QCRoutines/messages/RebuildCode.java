@@ -160,11 +160,13 @@ public class RebuildCode {
 
 		List<Message> messages = new ArrayList<Message>();
 
-		String codeString = codes.trim();
-		if (codeString.length() > 0) {
-			String[] splitCodes = codeString.split(";");
-			for (int i = 0; i < splitCodes.length; i++) {
-				messages.add(new RebuildCode(splitCodes[i]).getMessage());
+		if (null != codes) {
+			String codeString = codes.trim();
+			if (codeString.length() > 0) {
+				String[] splitCodes = codeString.split(";");
+				for (int i = 0; i < splitCodes.length; i++) {
+					messages.add(new RebuildCode(splitCodes[i]).getMessage());
+				}
 			}
 		}
 		
