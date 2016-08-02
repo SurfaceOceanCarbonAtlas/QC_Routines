@@ -85,6 +85,33 @@ public abstract class DataRecord {
 	 * @return The latitude column index
 	 */
 	public abstract int getLatitudeColumn();
+
+	/**
+	 * Returns the list of date/time column names
+	 * @return The list of date/time column names
+	 * @throws NoSuchColumnException If the column names cannot be found
+	 */
+	public TreeSet<String> getDateTimeColumnNames() throws NoSuchColumnException {
+		return getColumnNames(getDateTimeColumns());
+	}
+	
+	/**
+	 * Returns the name of the longitude column
+	 * @return The name of the longitude column
+	 * @throws NoSuchColumnException If the column name cannot be found
+	 */
+	public String getLongitudeColumnName() throws NoSuchColumnException {
+		return getColumnName(getLongitudeColumn());
+	}
+	
+	/**
+	 * Returns the name of the latitude column
+	 * @return The name of the latitude column
+	 * @throws NoSuchColumnException If the column name cannot be found
+	 */
+	public String getLatitudeColumnName() throws NoSuchColumnException {
+		return getColumnName(getLatitudeColumn());
+	}
 	
 	/**
 	 * Populate all fields whose values are taken directly from the input data
