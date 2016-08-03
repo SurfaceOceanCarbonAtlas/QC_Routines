@@ -2,7 +2,9 @@ package uk.ac.exeter.QCRoutines.messages;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 public class RebuildCode {
 	
@@ -20,13 +22,13 @@ public class RebuildCode {
 	
 	private static final int CODE_INDEX_VALID_VALUE = 6;
 
-	private Class<?> messageClass;
+	private Class<? extends Message> messageClass;
 	
 	private int lineNumber;
 	
-	private int columnIndex;
+	private TreeSet<Integer> columnIndices;
 	
-	private String columnName;
+	private TreeSet<String> columnNames;
 	
 	private int flagValue;
 	
@@ -37,14 +39,16 @@ public class RebuildCode {
 	public RebuildCode(Message message) throws MessageException {
 		messageClass = message.getClass();
 		lineNumber = message.getLineNumber();
-		columnIndex = message.getColumnIndex();
-		columnName = message.getColumnName();
+		columnIndices = message.getColumnIndices();
+		columnNames = message.getColumnNames();
 		flagValue = message.getFlag().getFlagValue();
 		fieldValue = message.getFieldValue();
 		validValue = message.getValidValue();
-		validateMessageClass();
+		
+		Message.checkBasicConstructor(messageClass);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public RebuildCode(String code) throws RebuildCodeException {
 			
 		String[] codeComponents = code.split("_");
@@ -53,7 +57,7 @@ public class RebuildCode {
 		} else {
 			
 			try {
-				messageClass = Class.forName(codeComponents[CODE_INDEX_CLASS_NAME]);
+				messageClass = (Class<? extends Message>) Class.forName(codeComponents[CODE_INDEX_CLASS_NAME]);
 			} catch (ClassNotFoundException e) {
 				throw new RebuildCodeException("Cannot find message class '" + codeComponents[0] + "'");
 			}
@@ -68,15 +72,24 @@ public class RebuildCode {
 			}
 			
 			try {
-				columnIndex = Integer.parseInt(codeComponents[CODE_INDEX_COLUMN_INDEX]);
-				if (columnIndex < 0) {
-					throw new RebuildCodeException("Invalid column index value");
+				columnIndices = new TreeSet<Integer>();
+				
+				String[] indices = codeComponents[CODE_INDEX_COLUMN_INDEX].split("\\|");
+				for (String indexString : indices) {
+					int columnIndex = Integer.parseInt(indexString);
+					if (columnIndex < 0) {
+						throw new RebuildCodeException("Invalid column index value");
+					}
+
+					columnIndices.add(columnIndex);
 				}
+				
 			} catch (NumberFormatException e) {
 				throw new RebuildCodeException("Unparseable column index value");
 			}
 			
-			columnName = codeComponents[CODE_INDEX_COLUMN_NAME];
+			
+			columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("\\|")));
 			
 			try {
 				flagValue = Integer.parseInt(codeComponents[CODE_INDEX_FLAG_VALUE]);
@@ -92,26 +105,33 @@ public class RebuildCode {
 		}
 	}
 	
-	private void validateMessageClass() throws MessageException {
-		// Message classes must have a constructor that takes
-		// int columnIndex, String columnName, Flag flag, int lineNumber, String fieldValue, String validValue
-		
-		try {
-			messageClass.getConstructor(int.class, String.class, Flag.class, int.class, String.class, String.class);
-		} catch (Exception e) {
-			throw new RebuildCodeException("Message class does not have the required constructor"); 
-		}
-	}
-	
 	public String getCode() {
 		StringBuffer result = new StringBuffer();
 		result.append(messageClass.getName());
 		result.append('_');
 		result.append(lineNumber);
 		result.append('_');
-		result.append(columnIndex);
+		
+		int indexCount = 0;
+		for (int columnIndex : columnIndices) {
+			indexCount++;
+			result.append(columnIndex);
+			if (indexCount < columnIndices.size()) {
+				result.append('|');
+			}
+		}
+		
 		result.append('_');
-		result.append(columnName);
+
+		int nameCount = 0;
+		for (String columnName : columnNames) {
+			nameCount++;
+			result.append(columnName);
+			if (nameCount < columnNames.size()) {
+				result.append('|');
+			}
+		}
+		
 		result.append('_');
 		result.append(flagValue);
 		result.append('_');
@@ -129,8 +149,8 @@ public class RebuildCode {
 	
 	public Message getMessage() throws MessageException {
 		try {
-			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, String.class, Flag.class, int.class, String.class, String.class);
-			return (Message) messageConstructor.newInstance(columnIndex, columnName, new Flag(flagValue), lineNumber, fieldValue, validValue);
+			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
+			return (Message) messageConstructor.newInstance(lineNumber, columnIndices, columnNames, new Flag(flagValue), fieldValue, validValue);
 		} catch (Exception e) {
 			throw new MessageException("Error while constructing message object from rebuild code", e);
 		}
@@ -140,11 +160,13 @@ public class RebuildCode {
 
 		List<Message> messages = new ArrayList<Message>();
 
-		String codeString = codes.trim();
-		if (codeString.length() > 0) {
-			String[] splitCodes = codeString.split(";");
-			for (int i = 0; i < splitCodes.length; i++) {
-				messages.add(new RebuildCode(splitCodes[i]).getMessage());
+		if (null != codes) {
+			String codeString = codes.trim();
+			if (codeString.length() > 0) {
+				String[] splitCodes = codeString.split(";");
+				for (int i = 0; i < splitCodes.length; i++) {
+					messages.add(new RebuildCode(splitCodes[i]).getMessage());
+				}
 			}
 		}
 		

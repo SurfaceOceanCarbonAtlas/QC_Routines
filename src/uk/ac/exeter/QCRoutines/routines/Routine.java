@@ -1,14 +1,16 @@
-package uk.ac.exeter.QCRoutines;
+package uk.ac.exeter.QCRoutines.routines;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
+import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Message;
 
 /**
- * The base class for a Sanity Check routine. These classes will be called
- * to sanity check the data after it's been read and processed for missing/
+ * The base class for a QC routine. These classes will be called
+ * to check the data after it's been read and processed for missing/
  * out of range values.
  */
 public abstract class Routine {
@@ -27,14 +29,15 @@ public abstract class Routine {
 	
 	/**
 	 * Initialise the checker and check that the supplied fields are valid
-	 * @param parameters The parameters for the sanity check
+	 * @param parameters The parameters for the routine
+	 * @param columnConfig The column configuration for the data records
 	 * @throws RoutineException
 	 */
-	public abstract void initialise(List<String> parameters) throws RoutineException;
+	public abstract void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException;
 	
 	/**
 	 * Processes a single record from the input data file.
-	 * These sanity checkers will be passed each record in turn.
+	 * These routines will be passed each record in turn.
 	 * @param messages The output messages
 	 * @param record The record
 	 */
@@ -48,7 +51,7 @@ public abstract class Routine {
 		return messages;
 	}
 	
-	public void addMessage(Message message, DataRecord record) {
+	public void addMessage(Message message, DataRecord record) throws DataRecordException {
 		messages.add(message);
 		record.addMessage(message);
 	}
