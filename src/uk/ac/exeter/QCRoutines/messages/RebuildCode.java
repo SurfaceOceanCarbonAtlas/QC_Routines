@@ -77,7 +77,7 @@ public class RebuildCode {
 				String[] indices = codeComponents[CODE_INDEX_COLUMN_INDEX].split("\\|");
 				for (String indexString : indices) {
 					int columnIndex = Integer.parseInt(indexString);
-					if (columnIndex < 0) {
+					if (columnIndex < 0 && columnIndex != Message.NO_COLUMN_INDEX) {
 						throw new RebuildCodeException("Invalid column index value");
 					}
 
@@ -88,8 +88,14 @@ public class RebuildCode {
 				throw new RebuildCodeException("Unparseable column index value");
 			}
 			
-			
-			columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("\\|")));
+			if (codeComponents[CODE_INDEX_COLUMN_NAME].length() == 0) {
+				columnNames = new TreeSet<String>();
+				for (int i = 0; i < columnIndices.size(); i++) {
+					columnNames.add("");
+				}	
+			} else {
+				columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("\\|")));
+			}
 			
 			try {
 				flagValue = Integer.parseInt(codeComponents[CODE_INDEX_FLAG_VALUE]);

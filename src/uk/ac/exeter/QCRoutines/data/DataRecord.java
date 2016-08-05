@@ -260,11 +260,13 @@ public abstract class DataRecord {
 	public void addMessage(Message message) throws NoSuchColumnException {
 		
 		for (int columnIndex : message.getColumnIndices()) {
-			DataColumn column = data.get(columnIndex);
-			if (null == column) {
-				throw new NoSuchColumnException(lineNumber, columnIndex);
+			if (columnIndex != Message.NO_COLUMN_INDEX) {
+				DataColumn column = data.get(columnIndex);
+				if (null == column) {
+					throw new NoSuchColumnException(lineNumber, columnIndex);
+				}
+				column.setFlag(message.getFlag());
 			}
-			column.setFlag(message.getFlag());
 		}
 
 		messages.add(message);
