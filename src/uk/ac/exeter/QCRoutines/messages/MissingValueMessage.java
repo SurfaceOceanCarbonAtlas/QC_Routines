@@ -23,6 +23,6 @@ public class MissingValueMessage extends Message {
 
 	@Override
 	public String getShortMessage() {
-		return getColumnNamesAsString() + "missing";
+		return getColumnNamesAsString() + " missing";
 	}
 }
