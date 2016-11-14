@@ -121,7 +121,7 @@ public abstract class Message {
 	}
 	
 	/**
-	 * Returns the list of column names as a String, with names separated by '/'
+	 * Returns the list of column names as a String, with names separated by '|'
 	 * @return The list of column names
 	 */
 	public String getColumnNamesAsString() {
