@@ -68,8 +68,14 @@ public class Flag implements Comparable<Flag> {
 	 */
 	protected static final String TEXT_NEEDED = "Needed";
 	
+	/**
+	 * The special value for an Ignored flag
+	 */
 	public static final int VALUE_IGNORED = -1002;
 	
+	/**
+	 * The text value for an Ignored flag
+	 */
 	protected static final String TEXT_IGNORED = "Ignored";
 
 	/**
@@ -102,6 +108,9 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public static final Flag NEEDED = makeNeededFlag();
 	
+	/**
+	 * An instance of an Ignored flag
+	 */
 	public static final Flag IGNORED = makeIgnoredFlag();
 	
 	/**
@@ -178,7 +187,7 @@ public class Flag implements Comparable<Flag> {
 	 * Checks to ensure that a flag value is valid. If the value is valid, the method does nothing.
 	 * If it is not valid, an exception is thrown.
 	 * @param value The flag value
-	 * @throws InvalidFlagException If the flag value is invalid
+	 * @return {@code true} if the flag value is valid; {@code false} if it is not
 	 */
 	public static boolean isValidFlagValue(int value) {
 		return (value == VALUE_GOOD || value == VALUE_ASSUMED_GOOD || value == VALUE_QUESTIONABLE || 
@@ -275,6 +284,10 @@ public class Flag implements Comparable<Flag> {
 		return flag;
 	}
 	
+	/**
+	 * Create an instance of an Ignored flag
+	 * @return An Ignored flag
+	 */
 	private static Flag makeIgnoredFlag() {
 		Flag flag = null;
 		try {
@@ -313,6 +326,11 @@ public class Flag implements Comparable<Flag> {
 		return (compareTo(flag) > 0);
 	}
 	
+	/**
+	 * Determines whether or not this flag represents a Good value.
+	 * Both Good and Assumed Good flags pass the check.
+	 * @return {@code true} if this flag is Good; {@code false} if it is not.
+	 */
 	public boolean isGood() {
 		return Math.abs(flagValue) == VALUE_GOOD;
 	}
