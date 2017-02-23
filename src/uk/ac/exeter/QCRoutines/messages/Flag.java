@@ -49,6 +49,16 @@ public class Flag implements Comparable<Flag> {
 	protected static final String TEXT_BAD = "Bad";
 
 	/**
+	 * The special value for a fatal flag
+	 */
+	public static final int VALUE_FATAL = 44;
+	
+	/**
+	 * The text value for a fatal flag
+	 */
+	protected static final String TEXT_FATAL = "Fatal";
+
+	/**
 	 * The special value for an unset flag
 	 */
 	public static final int VALUE_NOT_SET = -1000;
@@ -59,12 +69,12 @@ public class Flag implements Comparable<Flag> {
 	protected static final String TEXT_NOT_SET = "Not Set";
 
 	/**
-	 * The special value for an unset flag
+	 * The special value for a needed flag
 	 */
-	public static final int VALUE_NEEDED = -1001;
+	public static final int VALUE_NEEDED = -10;
 
 	/**
-	 * The text value for an unset flag
+	 * The text value for a needed flag
 	 */
 	protected static final String TEXT_NEEDED = "Needed";
 	
@@ -94,9 +104,14 @@ public class Flag implements Comparable<Flag> {
 	public static final Flag QUESTIONABLE = makeQuestionableFlag();
 	
 	/**
-	 *  An instance of a Good flag
+	 *  An instance of a Bad flag
 	 */
 	public static final Flag BAD = makeBadFlag();
+	
+	/**
+	 * An instance of a Fatal flag
+	 */
+	public static final Flag FATAL = makeFatalFlag();
 	
 	/**
 	 *  An instance of a Not Set flag
@@ -132,16 +147,17 @@ public class Flag implements Comparable<Flag> {
 	}
 	
 	/**
-	 * Returns the flag's WOCE value
-	 * @return The flag's WOCE value
+	 * Returns the flag's numeric value
+	 * @return The flag's numeric value
 	 */
 	public int getFlagValue() {
 		return flagValue;
 	}
 	
 	/**
-	 * Converts the flag's WOCE value into a String value
+	 * Converts the flag's numeric value into a String value
 	 */
+	@Override
 	public String toString() {
 		String result;
 		
@@ -160,6 +176,10 @@ public class Flag implements Comparable<Flag> {
 		}
 		case VALUE_BAD: {
 			result = TEXT_BAD;
+			break;
+		}
+		case VALUE_FATAL: {
+			result = TEXT_FATAL;
 			break;
 		}
 		case VALUE_NOT_SET: {
@@ -191,7 +211,8 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public static boolean isValidFlagValue(int value) {
 		return (value == VALUE_GOOD || value == VALUE_ASSUMED_GOOD || value == VALUE_QUESTIONABLE || 
-				value == VALUE_BAD || value == VALUE_NOT_SET || value == VALUE_NEEDED || value == VALUE_IGNORED);
+				value == VALUE_BAD || value == VALUE_FATAL || value == VALUE_NOT_SET || value == VALUE_NEEDED ||
+				value == VALUE_IGNORED);
 	}
 	
 	/**
@@ -255,6 +276,21 @@ public class Flag implements Comparable<Flag> {
 	}
 	
 	/**
+	 * Create an instance of a Fatal flag
+	 * @return A Fatal flag
+	 */
+	private static Flag makeFatalFlag() {
+		Flag flag = null;
+		try {
+			flag = new Flag(VALUE_FATAL);
+		} catch (InvalidFlagException e) {
+			// This won't be thrown; do nothing
+		}
+		
+		return flag;
+	}
+	
+	/**
 	 * Create an instance of a Not Set flag
 	 * @return A Not Set flag
 	 */
@@ -299,6 +335,7 @@ public class Flag implements Comparable<Flag> {
 		return flag;
 	}
 	
+	@Override
 	public boolean equals(Object compare) {
 		boolean result = false;
 		if (compare instanceof Flag) {
@@ -333,5 +370,44 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public boolean isGood() {
 		return Math.abs(flagValue) == VALUE_GOOD;
+	}
+	
+	/**
+	 * Return the WOCE value for a flag.
+	 * 
+	 * <ul>
+	 *   <li>Good and Assumed Good will return 2</li>
+	 *   <li>Questionable will return 3</li>
+	 *   <li>Bad and Fatal will return 4</li>
+	 *   <li>All other flag types will return -1, because there is no corresponding WOCE value.</li>
+	 * </ul>
+	 * 
+	 * @return The WOCE value for the flag
+	 */
+	public int getWoceValue() {
+		
+		int result;
+		
+		switch(flagValue) {
+		case VALUE_GOOD:
+		case VALUE_ASSUMED_GOOD: {
+			result = 2;
+			break;
+		}
+		case VALUE_QUESTIONABLE: {
+			result = 3;
+			break;
+		}
+		case VALUE_BAD:
+		case VALUE_FATAL: {
+			result = 4;
+			break;
+		}
+		default: {
+			result = -1;
+		}
+		}
+		
+		return result;
 	}
 }
