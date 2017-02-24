@@ -374,6 +374,15 @@ public class Flag implements Comparable<Flag> {
 	
 	/**
 	 * Return the WOCE value for a flag.
+	 * @return The WOCE value for the flag
+	 * @see #getWoceValue(int)
+	 */
+	public int getWoceValue() {
+		return getWoceValue(flagValue);
+	}
+	
+	/**
+	 * Return the WOCE value for a given flag value
 	 * 
 	 * <ul>
 	 *   <li>Good and Assumed Good will return 2</li>
@@ -384,8 +393,7 @@ public class Flag implements Comparable<Flag> {
 	 * 
 	 * @return The WOCE value for the flag
 	 */
-	public int getWoceValue() {
-		
+	public static int getWoceValue(int flagValue) {
 		int result;
 		
 		switch(flagValue) {
