@@ -189,6 +189,7 @@ public class RoutinesConfig {
 	/**
 	 * Returns a list containing fresh instances of all the configured routine classes
 	 * @return A list containing fresh instances of all the configured routine classes
+	 * @throws RoutineException If the routine cannot be initialised
 	 */
 	public List<Routine> getRoutines() throws RoutineException {
 		List<Routine> checkers = new ArrayList<Routine>(routineClasses.size());
