@@ -85,7 +85,7 @@ public class RoutinesConfig {
 	 * @throws ConfigException If the configuration is invalid
 	 */
 	public static void init(String instanceName, String filename) throws ConfigException {
-		instances.put(filename, new RoutinesConfig(filename));
+		instances.put(instanceName, new RoutinesConfig(filename));
 	}
 	
 	/**
