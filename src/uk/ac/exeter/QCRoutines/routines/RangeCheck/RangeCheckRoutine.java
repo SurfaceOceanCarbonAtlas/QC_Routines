@@ -24,14 +24,20 @@ public class RangeCheckRoutine extends Routine {
 	
 	double badMax = 0.0;
 	
+	double fatalMin = 0.0;
+	
+	double fatalMax = 0.0;
+	
 	boolean hasQuestionableRange = false;
 	
 	boolean hasBadRange = false;
 	
+	boolean hasFatalRange = false;
+	
 	@Override
 	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
-		if (parameters.size() != 5) {
-			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<questionable_range_min>,<questionable_range_max>,<bad_range_min>,<bad_range_max>");
+		if (parameters.size() != 5 && parameters.size() != 7) {
+			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<questionable_range_min>,<questionable_range_max>,<bad_range_min>,<bad_range_max>[,<fatal_range_min>,<fatal_range_max>]");
 		}
 		
 		columnName = parameters.get(0);
@@ -65,8 +71,26 @@ public class RangeCheckRoutine extends Routine {
 		}
 		
 		if (hasQuestionableRange && hasBadRange) {
-			if (badMin > questionableMin || badMax < questionableMax) {
+			if (badMin >= questionableMin || badMax <= questionableMax) {
 				throw new RoutineException("Bad range must be larger than questionable range");
+			}
+		}
+		
+		if (parameters.size() == 7) {
+			if (parameters.get(5).trim().length() > 0 || parameters.get(6).trim().length() > 0) {
+				hasFatalRange = true;
+				try {
+					fatalMin = Double.parseDouble(parameters.get(3));
+					fatalMax = Double.parseDouble(parameters.get(4));
+				} catch(NumberFormatException e) {
+					throw new RoutineException("Fatal range parameters must be numeric", e);
+				}
+			}
+			
+			if (hasBadRange && hasFatalRange) {
+				if (fatalMin > badMin || fatalMax < fatalMax) {
+					throw new RoutineException("Fatal range must be larger than bad range");
+				}
 			}
 		}
 	}
@@ -81,7 +105,9 @@ public class RangeCheckRoutine extends Routine {
 				if (null != valueString) {
 					double value = Double.parseDouble(valueString);
 					if (!Double.isNaN(value)) {
-						if (hasBadRange && (value < badMin || value > badMax)) {
+						if (hasFatalRange && value < fatalMin || value > fatalMax) {
+							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.FATAL, value, fatalMin, fatalMax), record);
+						} else if (hasBadRange && (value < badMin || value > badMax)) {
 							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, value, badMin, badMax), record);
 						} else if (hasQuestionableRange && (value < questionableMin || value > questionableMax)) {
 							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.QUESTIONABLE, value, questionableMin, questionableMax), record);
