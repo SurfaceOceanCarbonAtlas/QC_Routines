@@ -105,7 +105,7 @@ public class RangeCheckRoutine extends Routine {
 				if (null != valueString) {
 					double value = Double.parseDouble(valueString);
 					if (!Double.isNaN(value)) {
-						if (hasFatalRange && value < fatalMin || value > fatalMax) {
+						if (hasFatalRange && (value < fatalMin || value > fatalMax)) {
 							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.FATAL, value, fatalMin, fatalMax), record);
 						} else if (hasBadRange && (value < badMin || value > badMax)) {
 							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.BAD, value, badMin, badMax), record);
