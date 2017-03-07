@@ -71,7 +71,7 @@ public class RangeCheckRoutine extends Routine {
 		}
 		
 		if (hasQuestionableRange && hasBadRange) {
-			if (badMin >= questionableMin || badMax <= questionableMax) {
+			if (badMin > questionableMin || badMax < questionableMax) {
 				throw new RoutineException("Bad range must be larger than questionable range");
 			}
 		}
