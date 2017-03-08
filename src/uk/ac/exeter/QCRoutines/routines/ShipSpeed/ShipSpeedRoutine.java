@@ -10,6 +10,10 @@ import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
+import uk.ac.exeter.QCRoutines.routines.Monotonic.MissingTimeException;
+import uk.ac.exeter.QCRoutines.routines.Monotonic.MissingTimeMessage;
+import uk.ac.exeter.QCRoutines.routines.Monotonic.MonotonicMessage;
+import uk.ac.exeter.QCRoutines.routines.Monotonic.MonotonicRoutine;
 
 public class ShipSpeedRoutine extends Routine {
 
@@ -60,10 +64,10 @@ public class ShipSpeedRoutine extends Routine {
 					if (null != lastTime && null != thisTime) {
 					
 						double distance = calcDistance(lastLon, lastLat, thisLon, thisLat);
-						double hourDiff = calcHourDiff(lastTime, thisTime);
+						double hourDiff = MonotonicRoutine.calcHourDiff(lastRecord, currentRecord);
 						
 						if (hourDiff <= 0.0) {
-							addMessage(new BackwardsTimeMessage(currentRecord), currentRecord);
+							addMessage(new MonotonicMessage(currentRecord, Flag.BAD), currentRecord);
 						} else if (calcSecondsDiff(lastTime, thisTime) > 1) {
 							double speed = distance / hourDiff;
 							if (speed > badSpeedLimit) {
@@ -79,6 +83,12 @@ public class ShipSpeedRoutine extends Routine {
 			}
 		} catch (DataRecordException e) {
 			throw new RoutineException("Error while setting record message", e);
+		} catch (MissingTimeException e) {
+			try {
+				addMessage(new MissingTimeMessage(e.getRecord()), e.getRecord());
+			} catch (Exception e2) {
+				throw new RoutineException("Error while adding message to record", e2);
+			}
 		}
 		
 	}
@@ -114,17 +124,6 @@ public class ShipSpeedRoutine extends Routine {
 	 */
 	private double calcRadians(double degrees) {
 		return degrees * (Math.PI / 180);
-	}
-	
-	/**
-	 * Calculate the difference between two times in hours
-	 * @param time1 The first time
-	 * @param time2 The second time
-	 * @return The difference between the two times
-	 */
-	private double calcHourDiff(DateTime time1, DateTime time2) {
-		long difference = time2.getMillis() - time1.getMillis();
-		return (double) difference / 3600000.0;
 	}
 	
 	/**
