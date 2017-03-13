@@ -71,16 +71,18 @@ public class HighDeltaRoutine extends Routine {
 					if (null != thisStringValue) {
 						double thisValue = Double.parseDouble(thisStringValue);
 						DateTime thisTime = record.getTime();
-						
-						double minutesDifference = Seconds.secondsBetween(lastTime, thisTime).getSeconds() / 60.0;
-						double valueDelta = Math.abs(thisValue - lastValue);
-						
-						double deltaPerMinute = valueDelta / minutesDifference;
-						if (deltaPerMinute > maxDelta) {
-							try {
-								addMessage(new HighDeltaMessage(record.getLineNumber(), record.getColumn(columnName), deltaPerMinute, maxDelta), record);
-							} catch (DataRecordException e) {
-								throw new RoutineException ("Error while adding message", e);
+						if (thisValue != NO_VALUE) {
+							
+							double minutesDifference = Seconds.secondsBetween(lastTime, thisTime).getSeconds() / 60.0;
+							double valueDelta = Math.abs(thisValue - lastValue);
+							
+							double deltaPerMinute = valueDelta / minutesDifference;
+							if (deltaPerMinute > maxDelta) {
+								try {
+									addMessage(new HighDeltaMessage(record.getLineNumber(), record.getColumn(columnName), deltaPerMinute, maxDelta), record);
+								} catch (DataRecordException e) {
+									throw new RoutineException ("Error while adding message", e);
+								}
 							}
 						}
 					
