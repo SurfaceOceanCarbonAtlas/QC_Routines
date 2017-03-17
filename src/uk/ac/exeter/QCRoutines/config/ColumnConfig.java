@@ -21,7 +21,8 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
  * of the behaviour of {@link Flag} objects attached to them.
  * 
  * <p>
- *   The configuration is stored in a CSV file, which has the following columns:
+ *   The configuration is stored in a CSV file, with columns in the same order
+ *   as they are in the data file. Each line of the file contains the following values:
  * <p>
  * 
  * <ol>

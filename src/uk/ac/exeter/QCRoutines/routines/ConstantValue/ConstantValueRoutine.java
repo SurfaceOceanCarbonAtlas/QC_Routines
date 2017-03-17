@@ -63,11 +63,14 @@ public class ConstantValueRoutine extends Routine {
 		}
 	}
 
+	/**
+	 * Check all the records for periods when the configured column value is
+	 * constant for longer than the allowed time.
+	 */
 	@Override
 	public void processRecords(List<DataRecord> records) throws RoutineException {
 
 		List<DataRecord> recordCollection = new ArrayList<DataRecord>();
-		
 		
 		for (DataRecord record : records) {
 			// If there's no record stored, this is the first of a new constant value

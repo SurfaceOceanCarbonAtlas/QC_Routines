@@ -34,7 +34,7 @@ public class ColumnConfigItem {
 	private String columnName;
 	
 	/**
-	 * The index of the column in the data file
+	 * The index of the column in the data file (1-based)
 	 */
 	private int columnIndex;
 	
@@ -69,7 +69,7 @@ public class ColumnConfigItem {
 	 * Creates an empty column configuration item ready to be
 	 * populated by {@link ColumnConfig#parseLine}.
 	 * @param configFileLine The line number in the config file
-	 * @param columnIndex The column's index in the data file
+	 * @param columnIndex The column's index in the data file (1-based)
 	 */
 	public ColumnConfigItem(int configFileLine, int columnIndex) {
 		this.configFileLine = configFileLine;
@@ -93,7 +93,7 @@ public class ColumnConfigItem {
 	}
 	
 	/**
-	 * Returns the index of this column in the data file
+	 * Returns the (1-based) index of this column in the data file
 	 * @return The index of this column in the data file
 	 */
 	public int getColumnIndex() {
