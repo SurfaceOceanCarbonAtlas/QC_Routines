@@ -9,6 +9,7 @@ import uk.ac.exeter.QCRoutines.messages.InvalidFlagException;
 
 /**
  * Holds details of the configuration for a single SOCAT column
+ * @see ColumnConfig
  */
 public class ColumnConfigItem {
 		
@@ -43,7 +44,8 @@ public class ColumnConfigItem {
 	private int configFileLine;
 	
 	/**
-	 * The data type of the column
+	 * The data type of the column. One of S, N, or B.
+	 * @see ColumnConfig
 	 */
 	private String dataType;
 	
@@ -53,8 +55,8 @@ public class ColumnConfigItem {
 	private boolean required;
 	
 	/**
-	 * The flag cascade configuration String, which must be parsed
-	 * before flag cascades will work
+	 * The flag cascade configuration String
+	 * @see ColumnConfig
 	 */
 	private String flagCascadeConfig;
 	
@@ -63,15 +65,20 @@ public class ColumnConfigItem {
 	 */
 	private List<FlagCascade> flagCascades = new ArrayList<FlagCascade>();
 
-	
+	/**
+	 * Creates an empty column configuration item ready to be
+	 * populated by {@link ColumnConfig#parseLine}.
+	 * @param configFileLine The line number in the config file
+	 * @param columnIndex The column's index in the data file
+	 */
 	public ColumnConfigItem(int configFileLine, int columnIndex) {
 		this.configFileLine = configFileLine;
 		this.columnIndex = columnIndex;
 	}
 	
 	/**
-	 * Returns the name of the output SOCAT column that this configuration item refers to.
-	 * @return
+	 * Returns the name of the column that this configuration item refers to.
+	 * @return The column name
 	 */
 	public String getColumnName() {
 		return columnName;
@@ -79,10 +86,7 @@ public class ColumnConfigItem {
 	
 	/**
 	 * Determines whether or not this column is required to have a value.
-	 * If the column is part of a required group, it is deemed to be required
-	 * in this function.
-	 * 
-	 * @return {@code} true if the column must contain a value; {@code false} otherwise. 
+	 * @return {@code true} if the column must contain a value; {@code false} otherwise. 
 	 */
 	public boolean getRequired() {
 		return required;
@@ -105,9 +109,12 @@ public class ColumnConfigItem {
 	}
 	
 	/**
-	 * Parse the flag cascade configuration string.
+	 * Parse the flag cascade configuration string. This must not be called
+	 * until all the entire {@link ColumnConfig} has been parsed, because otherwise
+	 * the cascade may reference columns that have not yet been configured.
 	 * @param columnConfig The complete column configuration
-	 * @throws ConfigException If the configuration is invalid
+	 * @throws ConfigException If the cascade configuration is invalid
+	 * @see ColumnConfig
 	 */
 	protected void parseFlagCascade(ColumnConfig columnConfig) throws ConfigException {
 		if (null != flagCascadeConfig && flagCascadeConfig.length() > 0) {
@@ -149,22 +156,44 @@ public class ColumnConfigItem {
 		}
 	}
 	
+	/**
+	 * Returns the set of flag cascade specifications for this column
+	 * @return The flag cascades
+	 */
 	public List<FlagCascade> getFlagCascades() {
 		return flagCascades;
 	}
 	
+	/**
+	 * Determines whether or not this column is numeric
+	 * @return {@code true} if the column is numeric; {@code false} if it is not.
+	 */
 	public boolean isNumeric() {
 		return (dataType.equals(TYPE_NUMERIC));
 	}
 	
+	/**
+	 * Determines whether or not this column is Boolean
+	 * @return {@code true} if the column is Boolean; {@code false} if it is not.
+	 */
 	public boolean isBoolean() {
 		return (dataType.equals(TYPE_BOOLEAN));
 	}
 	
+	/**
+	 * Set the column name for this column
+	 * @param columnName The column name
+	 */
 	protected void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
-	
+
+	/**
+	 * Set the data type for this column. The type must be one of
+	 * {@link #TYPE_STRING}, {@link #TYPE_NUMERIC}, or {@link #TYPE_BOOLEAN}.
+	 * @param dataType The data type
+	 * @throws InvalidDataTypeException If an invalid data type is specified
+	 */
 	protected void setDataType(String dataType) throws InvalidDataTypeException {
 		if (!isValidDataType(dataType)) {
 			throw new InvalidDataTypeException(dataType);
@@ -173,17 +202,25 @@ public class ColumnConfigItem {
 		}
 	}
 	
+	/**
+	 * Specifies whether this column is required
+	 * @param required {@code true} if the column is required; {@code false} if it is not.
+	 */
 	protected void setRequired(boolean required) {
 		this.required = required;
 	}
 	
+	/**
+	 * Set the flag cascade configuration.
+	 * @param flagCascadeConfig The flag cascade configuration.
+	 */
 	protected void setFlagCascadeConfig(String flagCascadeConfig) {
 		this.flagCascadeConfig = flagCascadeConfig;
 	}
 	
 	/**
 	 * Check that a data type string is valid
-	 * @param type The dat type string
+	 * @param type The data type string
 	 * @return {@code true} if the string is valid; {@code false} if it is not.
 	 */
 	private boolean isValidDataType(String type) {

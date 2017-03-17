@@ -12,10 +12,87 @@ import java.util.Map;
 
 import uk.ac.exeter.QCRoutines.data.DataColumn;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
+import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
 /**
- * Holds a column configuration
+ * Holds the configuration of columns details for a {@link DataRecord}.
+ * The configuration stores details of the column names, types, and aspects
+ * of the behaviour of {@link Flag} objects attached to them.
+ * 
+ * <p>
+ *   The configuration is stored in a CSV file, which has the following columns:
+ * <p>
+ * 
+ * <ol>
+ *   <li>
+ *     Column Name
+ *   </li>
+ *   <li>
+ *     Data Type. One of:
+ *     <ul>
+ *       <li>
+ *         {@code S} - String. Times should be set as Strings; they will be parsed automatically.
+ *       </li>
+ *       <li>
+ *         {@code N} - Numeric
+ *       </li>
+ *       <li>
+ *         {@code B} - Boolean
+ *       </li>
+ *     </ul>
+ *   </li>
+ *   <li>
+ *     Required. {@code true} if a value is required, {@code false} otherwise.
+ *     If a Boolean column is empty it is assumed false.
+ *   </li>
+ *   <li>
+ *     Flag Cascade: Flags placed on a column can cascade to other columns. (See below.)
+ *   </li>
+ * </ol>
+ * 
+ * <p>
+ *   <b>Flag Cascading</b>
+ * </p>
+ * 
+ * <p>
+ *   When a {@link Flag} is set on a column, it can 'cascade' so that flags
+ *   are set on other columns. For example, a questionable sea surface temperature
+ *   value will mean that the calculated fCO<sub>2 is also questionable.
+ * </p>
+ * 
+ * <p>
+ *   The specification is as follows:
+ * </p>
+ * 
+ * <p>
+ *   {@code <Target column name>|<Flag to set on Questionable>|<Flag to set on Bad>}
+ * <p>
+ * 
+ * <p>
+ *   Multiple cascade columns can be specified, separated by semi-colons.
+ * </p>
+ *
+ * <p>
+ *   An example configuration line is below;
+ * </p>
+ * 
+ * <p>
+ *   {@code Salinity 1,N,Y,Mean Salinity|3|4;fCO2|2|3}
+ * </p>
+ * 
+ * <p>
+ *   This is the entry for a Salinity column. If its flag is set to Questionable,
+ *   then the Mean Salinity column is also assigned a Questionable flag, while the fCO2 column
+ *   is assigned a Good flag. For a Bad Salinity, Mean Salinity is set to Bad, and fCO2 is set to Questionable.
+ * </p>
+ * 
+ * <p>
+ *   Note that these cascades will only set flags if they are 'worse' than the flag that is already set, i.e.
+ *   Good -> Questionable -> Bad. A Questionable flag cascading to a column that already has a Bad flag will have no effect.
+ * </p>
+ * 
+ * @see Flag
  */
 public class ColumnConfig {
 	
