@@ -260,22 +260,24 @@ public abstract class DataRecord {
 	 * @return {@code true} if bad flags were raised; {@code false} otherwise.
 	 */
 	public boolean hasBad() {
-		return hasMessageWithFlag(Flag.BAD);
+		return hasMessageWithFlag(Flag.BAD, Flag.FATAL);
 	}
 	
 	/**
-	 * Indicates whether or not any messages with the specified flag were raised
+	 * Indicates whether or not any messages with the specified flags were raised
 	 * during the processing of this record
-	 * @param flag The flag to be searched for
+	 * @param flags The flags to be searched for
 	 * @return {@code true} if flags of the specified type were raised; {@code false} otherwise.
 	 */
-	private boolean hasMessageWithFlag(Flag flag) {
+	private boolean hasMessageWithFlag(Flag... flags) {
 		boolean result = false;
 		
 		for (Message message : messages) {
-			if (message.getFlag().equals(flag)) {
-				result = true;
-				break;
+			for (Flag flag : flags) {
+				if (message.getFlag().equals(flag)) {
+					result = true;
+					break;
+				}
 			}
 		}
 		
