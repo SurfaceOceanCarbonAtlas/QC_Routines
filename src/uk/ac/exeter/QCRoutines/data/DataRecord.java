@@ -12,15 +12,27 @@ import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.messages.RebuildCode;
 
+/**
+ * Holds a complete data record for use with QC routines.
+ * Each data record represents one line in a data file.
+ * 
+ * <p>
+ *   This is an abstract class because each type of {@code DataRecord}
+ *   must explicitly specify how the date/time, longitude and latitude
+ *   should be read from the record.
+ * </p>
+ * 
+ * @author Steve Jones
+ */
 public abstract class DataRecord {
 
 	/**
-	 * The output messages generated for this line, if any
+	 * The QC messages generated for this record
 	 */
 	protected List<Message> messages;
 	
 	/**
-	 * The line of the input file that this record came from
+	 * The line number of this record in the original file
 	 */
 	protected int lineNumber;
 	
@@ -29,7 +41,12 @@ public abstract class DataRecord {
 	 */
 	protected List<DataColumn> data;
 	
-	
+	/**
+	 * Creates an empty {@code DataRecord} with the specified columns, ready to be
+	 * populated with data.
+	 * @param lineNumber The record's line number
+	 * @param columnConfig The column configuration
+	 */
 	public DataRecord(int lineNumber, ColumnConfig columnConfig) {
 		this.messages = new ArrayList<Message>();
 		this.lineNumber = lineNumber;
@@ -37,9 +54,18 @@ public abstract class DataRecord {
 	}
 	
 	/**
-	 * Builds a complete record object
-	 * @param dataFields The set of data values for the record, in the order specified by the column specification
-	 * @param lineNumber The line number of the record
+	 * Creates a {@code DataRecord} with the specified columns and populates it
+	 * with the specified data values.
+	 * 
+	 * <p>
+	 *   The entries in {@code dataFields} are assumed to have data in the same
+	 *   column order as the {@code columnConfig}.
+	 * </p>
+	 * 
+	 * @param lineNumber The record's line number
+	 * @param columnConfig The column configuration
+	 * @param dataFields The data values for the record
+	 * @throws DataRecordException If the {@code dataFields} do not match the {@code columnConfig}
 	 */
 	public DataRecord(int lineNumber, ColumnConfig columnConfig, List<String> dataFields) throws DataRecordException {
 		this.messages = new ArrayList<Message>();
@@ -53,11 +79,12 @@ public abstract class DataRecord {
 	/**
 	 * Returns the date/time of this record as a single object.
 	 * @return The date/time of this record.
+	 * @throws DataRecordException If the date/time is mis-formatted or otherwise cannot be obtained
 	 */
 	public abstract DateTime getTime() throws DataRecordException;
 
 	/**
-	 * Returns the list of column indices for the date and time values in the record
+	 * Returns the column indices that hold the date and time values in the record
 	 * @return The indices of the date/time column(s)
 	 */
 	public abstract TreeSet<Integer> getDateTimeColumns();
@@ -65,6 +92,7 @@ public abstract class DataRecord {
 	/**
 	 * Returns the longitude of this record
 	 * @return The longitude of this record
+	 * @throws DataRecordException If the longitude is invalid
 	 */
 	public abstract double getLongitude() throws DataRecordException;
 	
@@ -77,6 +105,7 @@ public abstract class DataRecord {
 	/**
 	 * Returns the latitude of this record
 	 * @return The latitude of this record
+	 * @throws DataRecordException If the latitude is invalid
 	 */
 	public abstract double getLatitude() throws DataRecordException;
 	
@@ -114,9 +143,15 @@ public abstract class DataRecord {
 	}
 	
 	/**
-	 * Populate all fields whose values are taken directly from the input data
+	 * Populate the column values in this record with the specified values.
+	 * 
+ 	 * <p>
+	 *   The entries in {@code dataFields} are assumed to have data in the same
+	 *   column order as the column configuration for the record.
+	 * </p>
 	 * @param dataFields The input data fields
-	 * @throws DataRecordException If the data fields do not match the columns/data types of the record 
+	 * @throws DataRecordException If the data fields do not match the columns/data types of the record
+	 * @see DataRecord#DataRecord(int, ColumnConfig, List) 
 	 */
 	protected void setDataValues(List<String> dataFields) throws DataRecordException {
 		for (int i = 1; i < dataFields.size(); i++) {
@@ -134,7 +169,7 @@ public abstract class DataRecord {
 	 * Returns the value of a named column
 	 * @param columnName The name of the column
 	 * @return The value of that column
-	 * @throws DataRecordException If the named column does not exist
+	 * @throws NoSuchColumnException If the named column does not exist
 	 */
 	public String getValue(String columnName) throws NoSuchColumnException {
 		return data.get(getColumnIndex(columnName)).getValue();
@@ -144,7 +179,7 @@ public abstract class DataRecord {
 	 * Returns the value held in the specified column
 	 * @param columnIndex The 1-based column index
 	 * @return The value of that column
-	 * @throws DataRecordException If the column does not exist
+	 * @throws NoSuchColumnException If the column does not exist
 	 */
 	public String getValue(int columnIndex) throws NoSuchColumnException {
 		DataColumn column = data.get(columnIndex);
@@ -159,7 +194,7 @@ public abstract class DataRecord {
 	 * Returns the name of the column corresponding to the specified column index
 	 * @param columnIndex The 1-based column index
 	 * @return The column name
-	 * @throws DataRecordException If the column does not exist
+	 * @throws NoSuchColumnException If the column does not exist
 	 */
 	public String getColumnName(int columnIndex) throws NoSuchColumnException {
 		DataColumn column = data.get(columnIndex);
@@ -170,6 +205,12 @@ public abstract class DataRecord {
 		return column.getName();
 	}
 	
+	/**
+	 * Returns the column names of each of the specified (1-based) column indices.
+	 * @param columnIndices The column indices
+	 * @return The column names
+	 * @throws NoSuchColumnException If any of the column indices does not exist
+	 */
 	public TreeSet<String> getColumnNames(TreeSet<Integer> columnIndices) throws NoSuchColumnException {
 		TreeSet<String> columnNames = new TreeSet<String>();
 		for (int columnIndex : columnIndices) {
@@ -179,10 +220,10 @@ public abstract class DataRecord {
 	}
 	
 	/**
-	 * Returns the index of the named column
-	 * @param columnIndex The column name
+	 * Returns the 1-based index of the named column
+	 * @param columnName The column name
 	 * @return The 1-based column index
-	 * @throws DataRecordException If the column does not exist
+	 * @throws NoSuchColumnException If the column does not exist
 	 */
 	public int getColumnIndex(String columnName) throws NoSuchColumnException {
 		
@@ -219,8 +260,15 @@ public abstract class DataRecord {
 	 * @return {@code true} if bad flags were raised; {@code false} otherwise.
 	 */
 	public boolean hasBad() {
-		return hasMessageWithFlag(Flag.BAD);	}
+		return hasMessageWithFlag(Flag.BAD);
+	}
 	
+	/**
+	 * Indicates whether or not any messages with the specified flag were raised
+	 * during the processing of this record
+	 * @param flag The flag to be searched for
+	 * @return {@code true} if flags of the specified type were raised; {@code false} otherwise.
+	 */
 	private boolean hasMessageWithFlag(Flag flag) {
 		boolean result = false;
 		
@@ -254,8 +302,7 @@ public abstract class DataRecord {
 	 * Adds a message to the set of messages assigned to this record,
 	 * and optionally updates the record's flag to match
 	 * @param message The message
-	 * @param updateFlag {@code true} if the record's flag should be updated; {@code false} if it should not.
-	 * @throws NoSuchColumnException 
+	 * @throws NoSuchColumnException If the column specified in the message does not exist
 	 */
 	public void addMessage(Message message) throws NoSuchColumnException {
 		
@@ -276,8 +323,7 @@ public abstract class DataRecord {
 	 * Replace all the messages for this record with the supplied list of messages.
 	 * Optionally, the record's flags will also be reset according to the flags on the messages.
 	 * @param messages The set of messages
-	 * @param setFlag Indicates whether or not the record's flag is to be updated
-	 * @throws NoSuchColumnException 
+	 * @throws NoSuchColumnException If any column specified in the messages does not exist 
 	 */
 	public void setMessages(List<Message> messages) throws NoSuchColumnException {
 		clearMessages();
@@ -289,8 +335,10 @@ public abstract class DataRecord {
 	/**
 	 * Replace all the messages for this record with the supplied message codes.
 	 * The record's flags will also be reset according to the flags on the messages.
-	 * @param messages The set of message codes
-	 * @throws NoSuchColumnException 
+	 * @param codes The message codes
+	 * @throws MessageException If a message cannot be rebuilt from a message code
+	 * @throws NoSuchColumnException If any column specified in the messages does not exist
+	 * @see RebuildCode 
 	 */
 	public void setMessages(String codes) throws MessageException, NoSuchColumnException {
 		setMessages(RebuildCode.getMessagesFromRebuildCodes(codes));
@@ -298,7 +346,7 @@ public abstract class DataRecord {
 	
 	/**
 	 * Clear all messages from the record, and reset the flags to the default
-	 * 'good' state.
+	 * {@link Flag#GOOD}.
 	 */
 	private void clearMessages() {
 		messages = new ArrayList<Message>();
@@ -323,10 +371,21 @@ public abstract class DataRecord {
 		return summaries.toString();
 	}
 	
+	/**
+	 * Returns the complete {@code DataColumn} object for the named column
+	 * @param columnName The column name
+	 * @return The column's {@code DataColumn} object
+	 * @throws NoSuchColumnException If the column does not exist
+	 */
 	public DataColumn getColumn(String columnName) throws NoSuchColumnException {
 		return data.get(getColumnIndex(columnName));
 	}
 	
+	/**
+	 * Determines whether or not a named column exists in this record
+	 * @param columnName The column name
+	 * @return {@code true} if the column exists; {@code false} if it does not.
+	 */
 	public boolean columnExists(String columnName) {
 		boolean result = false;
 		
