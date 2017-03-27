@@ -4,6 +4,7 @@ import java.util.List;
 
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
+import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
@@ -104,7 +105,7 @@ public class RangeCheckRoutine extends Routine {
 				
 				if (null != valueString) {
 					double value = Double.parseDouble(valueString);
-					if (!Double.isNaN(value)) {
+					if (!Double.isNaN(value) && value != RoutinesConfig.NO_VALUE) {
 						if (hasFatalRange && (value < fatalMin || value > fatalMax)) {
 							addMessage(new RangeCheckMessage(record.getLineNumber(), record.getColumn(columnName), Flag.FATAL, value, fatalMin, fatalMax), record);
 						} else if (hasBadRange && (value < badMin || value > badMax)) {

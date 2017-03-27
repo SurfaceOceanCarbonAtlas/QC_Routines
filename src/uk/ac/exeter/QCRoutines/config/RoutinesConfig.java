@@ -20,6 +20,11 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
 public class RoutinesConfig {
 	
 	/**
+	 * Indicates an empty value
+	 */
+	public static final double NO_VALUE = -99999.9;
+
+	/**
 	 * The name for the default configuration.
 	 * This is used if only one unnamed instance is used.
 	 */

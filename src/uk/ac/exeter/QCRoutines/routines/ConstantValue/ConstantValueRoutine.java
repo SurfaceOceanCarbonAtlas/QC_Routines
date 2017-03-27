@@ -7,6 +7,7 @@ import org.joda.time.Seconds;
 
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
+import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
@@ -113,8 +114,9 @@ public class ConstantValueRoutine extends Routine {
 			if (null != firstRecordStringValue && null != recordStringValue) {
 				double currentValue = Double.parseDouble(firstRecordStringValue);
 				double recordValue = Double.parseDouble(recordStringValue);
-				
-				result = (currentValue == recordValue);
+				if (recordValue != RoutinesConfig.NO_VALUE) {
+					result = (currentValue == recordValue);
+				}
 			}
 		} catch (NumberFormatException e) {
 			throw new RoutineException("Cannot compare non-numeric values", e);

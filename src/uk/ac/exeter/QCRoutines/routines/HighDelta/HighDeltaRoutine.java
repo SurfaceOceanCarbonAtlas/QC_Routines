@@ -7,6 +7,7 @@ import org.joda.time.Seconds;
 
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
+import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
@@ -15,8 +16,6 @@ import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 public class HighDeltaRoutine extends Routine {
-
-	private static final double NO_VALUE = -99999.9;
 
 	private String columnName;
 	
@@ -52,13 +51,13 @@ public class HighDeltaRoutine extends Routine {
 
 	@Override
 	public void processRecords(List<DataRecord> records) throws RoutineException {
-		double lastValue = NO_VALUE;
+		double lastValue = RoutinesConfig.NO_VALUE;
 		DateTime lastTime = null;
 		
 		for (DataRecord record : records) {
 		
 			try {
-				if (lastValue == NO_VALUE) {
+				if (lastValue == RoutinesConfig.NO_VALUE) {
 					String lastValueString = record.getValue(columnName);
 					if (null != lastValueString) {
 						lastValue = Double.parseDouble(lastValueString);
@@ -71,7 +70,7 @@ public class HighDeltaRoutine extends Routine {
 					if (null != thisStringValue) {
 						double thisValue = Double.parseDouble(thisStringValue);
 						DateTime thisTime = record.getTime();
-						if (thisValue != NO_VALUE) {
+						if (thisValue != RoutinesConfig.NO_VALUE) {
 							
 							double minutesDifference = Seconds.secondsBetween(lastTime, thisTime).getSeconds() / 60.0;
 							double valueDelta = Math.abs(thisValue - lastValue);

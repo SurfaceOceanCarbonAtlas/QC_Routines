@@ -5,6 +5,7 @@ import java.util.List;
 
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
+import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
@@ -59,7 +60,7 @@ public class OutlierRoutine extends Routine {
 				String valueString = record.getValue(columnName);
 				if (null != valueString) {
 					double value = Double.parseDouble(valueString);
-					if (!Double.isNaN(value)) {
+					if (!Double.isNaN(value) && value != RoutinesConfig.NO_VALUE) {
 						valueCount++;
 						recordValues.add(new RecordValue(record, value));
 						
