@@ -23,7 +23,7 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
  * This prevents issues where sensors are offline.
  * 
  * @author zuj007
- *
+ * @see ConstantValueMessage
  */
 public class ConstantValueRoutine extends Routine {
 

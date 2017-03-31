@@ -8,8 +8,34 @@ import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * A dummy QC routine that will always generate messages. This is useful for
+ * testing message handling without having to create data to trigger a 'normal'
+ * routine.
+ * 
+ * <p>
+ *   Messages are created as follows:
+ * </p>
+ * <ul>
+ *   <li>
+ *     The first 500 records are given messages with {@link Flag#QUESTIONABLE} flags.
+ *   </li>
+ *   <li>
+ *     Records 501 to 1003 are given messages with {@link Flag#BAD} flags.
+ *   </li>
+ *   <li>
+ *     The first 15 records are given messages with both {@link Flag#QUESTIONABLE} and {@link Flag#BAD} flags.
+ *   </li>
+ * </ul> 
+ * 
+ * @author Steve Jones
+ * @see DummyMessage
+ */
 public class DummyRoutine extends Routine {
 
+	/**
+	 * Constructor - no action needed
+	 */
 	public DummyRoutine() {
 		super();
 	}
