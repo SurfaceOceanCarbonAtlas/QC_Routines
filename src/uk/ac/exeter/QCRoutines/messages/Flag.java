@@ -1,10 +1,30 @@
 package uk.ac.exeter.QCRoutines.messages;
 
 /**
- * Represents a WOCE-type flag, with Good, Questionable or Bad values.
- * There is also a special case for an Unset flag.
+ * Represents a Flag placed on a data record.
+ * 
+ * <p>
+ *   Flags are based on the WOCE flags, with values for Good, Questionable and Bad.
+ *   All records exported from a system should ultimately have one of these three flags
+ *   assigned to it. However, during processing a number of other flag values can be useful:
+ * </p>
+ * <ul>
+ *   <li>
+ *     <b>Assumed Good:</b> Automatic processing has flagged the record as good, and there is
+ *     no indication that this should be changed.
+ *   </li>
+ *   <li>
+ *     <b>Fatal:</b> The record has a fundamental problem which means it cannot be processed at all.
+ *   </li>
+ *   <li>
+ *     <b>Not Set:</b> A flag has not yet been assigned to this record.
+ *   </li>
+ *   <li>
+ *     <b>Needed:</b> A flag must be assigned manually by a human operator.
+ *   </li>
+ * </ul>
+ * 
  * @author Steve Jones
- *
  */
 public class Flag implements Comparable<Flag> {
 
@@ -391,6 +411,7 @@ public class Flag implements Comparable<Flag> {
 	 *   <li>All other flag types will return -1, because there is no corresponding WOCE value.</li>
 	 * </ul>
 	 * 
+	 * @param flagValue The numeric flag value
 	 * @return The WOCE value for the flag
 	 */
 	public static int getWoceValue(int flagValue) {

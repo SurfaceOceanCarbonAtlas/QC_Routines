@@ -13,10 +13,34 @@ import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
+/**
+ * Sometimes a value in a column should be fixed, i.e. the same in every record.
+ * This validation routine checks those fields.
+ * 
+ * <p>
+ *   The method works by assuming that the value in the first record is correct,
+ *   and all other records should contain that value. This can cause a very
+ *   large number of messages if the first value is the one that's wrong.
+ * </p>
+ *  
+ * <p>
+ *   The routine can be configured such that missing values are ignored, and
+ *   do not trigger a message.
+ * </p>
+ * 
+ * @author Steve Jones
+ *
+ */
 public class FixedValueRoutine extends Routine {
 
+	/**
+	 * The name of the column that has the fixed value
+	 */
 	private String columnName;
 	
+	/**
+	 * Indicates whether or not missing values should be excluded from the check
+	 */
 	private boolean ignoreMissing = false;
 	
 	@Override
@@ -35,7 +59,6 @@ public class FixedValueRoutine extends Routine {
 		} catch (ParseException e) {
 			throw new RoutineException("ignoreMissing parameter is not a recognised boolean value");
 		}
-		
 	}
 
 	@Override
@@ -44,7 +67,6 @@ public class FixedValueRoutine extends Routine {
 		try {
 			String firstValue = records.get(0).getValue(columnName);
 			int firstRecord = 0;
-			
 			
 			if (ignoreMissing) {
 				while (RoutineUtils.isEmpty(firstValue) && firstRecord < records.size()) {
@@ -69,15 +91,8 @@ public class FixedValueRoutine extends Routine {
 					}
 				}
 			}
-			
-			
-			
 		} catch (NoSuchColumnException e) {
 			throw new RoutineException("Could not find column '" + columnName + "' in record", e);
 		}
-		
-		
-		
 	}
-
 }
