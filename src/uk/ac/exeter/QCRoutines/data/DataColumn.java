@@ -152,9 +152,13 @@ public class DataColumn {
 	
 	/**
 	 * Set the flag for the data value. Any flag cascades are also triggered.
+	 * Flags are only set if the specified flag is more significant than
+	 * the flag that is already set on the column.
+	 * 
 	 * @param flag The flag
 	 * @throws NoSuchColumnException If any cascade columns are missing
 	 * @see ColumnConfig
+	 * @see Flag#moreSignificantThan(Flag)
 	 */
 	public void setFlag(Flag flag) throws NoSuchColumnException {
 		if (flag.moreSignificantThan(this.flag)) {
