@@ -8,7 +8,7 @@ import uk.ac.exeter.QCRoutines.messages.Flag;
 /**
  * Sometimes when a flag is set on one column, a flag should
  * also be set automatically on another column. For example,
- * if SST is marked as Bad, fCO₂ should also be marked bad.
+ * if SST is marked as Bad, fCO<sub>2</sub> should also be marked bad.
  * 
  * <p>
  *   This class describes this 'cascade' of one flag to another column. A
