@@ -15,10 +15,30 @@ import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * QC Routine to check whether a given data value is changing at an
+ * unacceptably fast rate.
+ * 
+ * <p>
+ *   There are limits on how quickly a given measured value should change over time. For example,
+ *   sea surface temperatures should not change by 20°C between measurements, given the normal operating speed
+ *   of a ship. This routine checks the values between consecutive records and calculates the delta
+ *   in terms of units per minute. If this delta exceeds the configured threshold, a message will be generated. 
+ * </p>
+ * 
+ * @author Steve Jones
+ *
+ */
 public class HighDeltaRoutine extends Routine {
 
+	/**
+	 * The name of the columns whose values are to be checked.
+	 */
 	private String columnName;
 	
+	/**
+	 * The maximum delta between values, in units per minute
+	 */
 	private double maxDelta;
 	
 	@Override
