@@ -8,6 +8,12 @@ import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.messages.RebuildCode;
 
+/**
+ * Exception thrown when a date/time cannot be parsed because one or more date/time
+ * columns are empty.
+ * @author Steve Jones
+ *
+ */
 public class MissingDateTimeElementMessage extends Message {
 
 	/**
