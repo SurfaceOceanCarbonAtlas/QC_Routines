@@ -27,7 +27,7 @@ public class ShipSpeedRoutine extends Routine {
 	private double questionableSpeedLimit = 0;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() < 2) {
 			throw new RoutineException("Must supply two parameters: Questionable Speed Limit and Bad Speed Limit");
 		}
@@ -46,7 +46,7 @@ public class ShipSpeedRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		
 		try {
 			DataRecord lastRecord = null;

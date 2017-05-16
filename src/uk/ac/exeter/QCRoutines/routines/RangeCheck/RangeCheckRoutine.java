@@ -2,7 +2,6 @@ package uk.ac.exeter.QCRoutines.routines.RangeCheck;
 
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
@@ -15,28 +14,28 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 public class RangeCheckRoutine extends Routine {
 
-	String columnName;
+	private String columnName;
 
-	double questionableMin = 0.0;
+	private double questionableMin = 0.0;
 	
-	double questionableMax = 0.0;
+	private double questionableMax = 0.0;
 	
-	double badMin = 0.0;
+	private double badMin = 0.0;
 	
-	double badMax = 0.0;
+	private double badMax = 0.0;
 	
-	double fatalMin = 0.0;
+	private double fatalMin = 0.0;
 	
-	double fatalMax = 0.0;
+	private double fatalMax = 0.0;
 	
-	boolean hasQuestionableRange = false;
+	private boolean hasQuestionableRange = false;
 	
-	boolean hasBadRange = false;
+	private boolean hasBadRange = false;
 	
-	boolean hasFatalRange = false;
+	private boolean hasFatalRange = false;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	public void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 5 && parameters.size() != 7) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<questionable_range_min>,<questionable_range_max>,<bad_range_min>,<bad_range_max>[,<fatal_range_min>,<fatal_range_max>]");
 		}
@@ -97,7 +96,7 @@ public class RangeCheckRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 
 		for (DataRecord record : records) {
 			try {

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
@@ -15,7 +14,7 @@ public class TimeGapRoutine extends Routine {
 	private int gapLimit;
 
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 1) {
 			throw new RoutineException("Incorrect number of parameters - should be <gapLimit>");
 		}
@@ -32,7 +31,7 @@ public class TimeGapRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		DateTime lastTime = null;
 		
 		try {

@@ -3,7 +3,6 @@ package uk.ac.exeter.QCRoutines.routines.Outlier;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
@@ -15,12 +14,12 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 public class OutlierRoutine extends Routine {
 
-	String columnName;
+	private String columnName;
 	
-	double stdevLimit;
+	private double stdevLimit;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 2) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<stdevLimit>");
 		}
@@ -48,7 +47,7 @@ public class OutlierRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	public void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		
 		int valueCount = 0;
 		List<RecordValue> recordValues = new ArrayList<RecordValue>();

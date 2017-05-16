@@ -3,7 +3,6 @@ package uk.ac.exeter.QCRoutines.routines.FixedValue;
 import java.text.ParseException;
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
@@ -44,7 +43,7 @@ public class FixedValueRoutine extends Routine {
 	private boolean ignoreMissing = false;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 2) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<ignoreMissing?>");
 		}
@@ -62,7 +61,7 @@ public class FixedValueRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		
 		try {
 			String firstValue = records.get(0).getValue(columnName);

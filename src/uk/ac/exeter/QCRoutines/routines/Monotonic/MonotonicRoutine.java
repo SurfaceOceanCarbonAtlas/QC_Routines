@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
@@ -24,7 +23,7 @@ public class MonotonicRoutine extends Routine {
 	private Flag failureFlag;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 
 		boolean paramsOK = true;
 		
@@ -45,7 +44,7 @@ public class MonotonicRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		try {
 			DataRecord lastRecord = null;
 			

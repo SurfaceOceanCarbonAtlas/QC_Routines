@@ -2,7 +2,6 @@ package uk.ac.exeter.QCRoutines.routines.Dummy;
 
 import java.util.List;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.routines.Routine;
@@ -41,12 +40,12 @@ public class DummyRoutine extends Routine {
 	}
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		// Nothing to do
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 
 		// We make messages for groups of records, assuming they exist.
 		

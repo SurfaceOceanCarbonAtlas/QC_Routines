@@ -5,7 +5,6 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
@@ -42,7 +41,7 @@ public class HighDeltaRoutine extends Routine {
 	private double maxDelta;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 
 		if (parameters.size() != 2) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<maxDelta>");
@@ -70,7 +69,7 @@ public class HighDeltaRoutine extends Routine {
 	}
 
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		double lastValue = RoutinesConfig.NO_VALUE;
 		DateTime lastTime = null;
 		

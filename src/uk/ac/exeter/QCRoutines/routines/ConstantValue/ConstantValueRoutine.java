@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.joda.time.Seconds;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
 import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
@@ -38,7 +37,7 @@ public class ConstantValueRoutine extends Routine {
 	private double maxDuration;
 	
 	@Override
-	public void initialise(List<String> parameters, ColumnConfig columnConfig) throws RoutineException {
+	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 2) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<maxDuration>");
 		}
@@ -69,7 +68,7 @@ public class ConstantValueRoutine extends Routine {
 	 * constant for longer than the allowed time.
 	 */
 	@Override
-	public void processRecords(List<DataRecord> records) throws RoutineException {
+	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 
 		List<DataRecord> recordCollection = new ArrayList<DataRecord>();
 		
