@@ -8,14 +8,38 @@ import uk.ac.exeter.QCRoutines.config.RoutinesConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
+import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * Routine to detect outliers.
+ * 
+ * <p>
+ *   The routine is configured with a column name and a standard deviation limit.
+ *   The mean and standard deviation of all the values in that column are calculated.
+ *   Each record is assessed to determine how many standard deviations away from the
+ *   mean it is. If it is further away than the configured standard deviation limit,
+ *   a message will be raised.
+ * </p>
+ * <p>
+ * 	 All outliers are given a {@link Flag#BAD} status.
+ * </p>
+ * @author Steve Jones
+ *
+ */
 public class OutlierRoutine extends Routine {
 
+	/**
+	 * The name of the column whose values are to be checked
+	 */
 	private String columnName;
 	
+	/**
+	 * The maximum number of standard deviations away from the mean a
+	 * value can be before it is considered an outlier.
+	 */
 	private double stdevLimit;
 	
 	@Override
@@ -105,9 +129,22 @@ public class OutlierRoutine extends Routine {
 	 * checking after the mean and stdev have been calculated.
 	 */
 	private class RecordValue {
+
+		/**
+		 * The data record
+		 */
 		private DataRecord record;
+		
+		/**
+		 * The extracted value
+		 */
 		private double value;
 		
+		/**
+		 * Simple constructor
+		 * @param record The data record
+		 * @param value The extracted value
+		 */
 		private RecordValue(DataRecord record, double value) {
 			this.record = record;
 			this.value = value;
