@@ -78,7 +78,7 @@ public abstract class Routine {
 	 *   the routine's configuration, and then checks that the parameters are valid
 	 *   using the {@link #processParameters(List)} method. Assuming those
 	 *   checks pass, the actual processing is performed by the
-	 *   {@link #doRecordProcessing(List, List)} method.
+	 *   {@link #processRecords(List, Map)} method.
 	 * </p>
 	 * 
 	 * @param records The records to be processed
