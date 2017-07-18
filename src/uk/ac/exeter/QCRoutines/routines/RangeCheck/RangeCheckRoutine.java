@@ -12,26 +12,66 @@ import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * Routine for checking whether values are within an allowable range.
+ * <p>
+ *   Three ranges are allowed - the narrowest range will trigger a {@link Flag#QUESTIONABLE},
+ *   the middle range will trigger a {@link Flag#BAD}, and the widest range will trigger a
+ *   {@link Flag#FATAL}.
+ * </p>
+ * @author Steve Jones
+ *
+ */
 public class RangeCheckRoutine extends Routine {
 
+	/**
+	 * The name of the column whose values are to be checked
+	 */
 	private String columnName;
 
+	/**
+	 * The minimum value of the range that will trigger a {@link Flag#QUESTIONABLE}.
+	 */
 	private double questionableMin = 0.0;
 	
+	/**
+	 * The maximum value of the range that will trigger a {@link Flag#QUESTIONABLE}.
+	 */
 	private double questionableMax = 0.0;
 	
+	/**
+	 * The minimum value of the range that will trigger a {@link Flag#BAD}.
+	 */
 	private double badMin = 0.0;
 	
+	/**
+	 * The maximum value of the range that will trigger a {@link Flag#BAD}.
+	 */
 	private double badMax = 0.0;
 	
+	/**
+	 * The minimum value of the range that will trigger a {@link Flag#FATAL}.
+	 */
 	private double fatalMin = 0.0;
 	
+	/**
+	 * The maximum value of the range that will trigger a {@link Flag#FATAL}.
+	 */
 	private double fatalMax = 0.0;
 	
+	/**
+	 * Indicates whether or not this range checker has a Questionable range configured
+	 */
 	private boolean hasQuestionableRange = false;
 	
+	/**
+	 * Indicates whether or not this range checker has a Bad range configured
+	 */
 	private boolean hasBadRange = false;
 	
+	/**
+	 * Indicates whether or not this range checker has a Fatal range configured
+	 */
 	private boolean hasFatalRange = false;
 	
 	@Override
