@@ -9,8 +9,18 @@ import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
+/**
+ * Routine to detect excessively large time gaps between measurements.
+ * This could indicate the start of a new crossing, which should
+ * be treated as a separate entity.
+ * @author Steve Jones
+ *
+ */
 public class TimeGapRoutine extends Routine {
 
+	/**
+	 * The maximum allowed gap between measurements, in days
+	 */
 	private int gapLimit;
 
 	@Override
