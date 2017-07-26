@@ -6,7 +6,6 @@ import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
-import uk.ac.exeter.QCRoutines.messages.RebuildCode;
 
 /**
  * Message for a date/time that cannot be parsed due to an invalid value
@@ -16,14 +15,14 @@ import uk.ac.exeter.QCRoutines.messages.RebuildCode;
 public class UnparseableDateMessage extends Message {
 
 	/**
-	 * Constructor for reconstructing a message object from a {@link RebuildCode}.
-	 * @param lineNumber The line number for which the message was raised
-	 * @param columnIndices The column indices to which the the message relates
-	 * @param columnNames The column names to which the message relates
+	 * The generic constructor for a Message object.
+	 * @param lineNumber The line to which this message applies
+	 * @param columnIndices The index(es) of the column(s) to which this message applies
+	 * @param columnNames The name(s) of the column(s) to which this message applies
 	 * @param flag The flag for the message
-	 * @param fieldValue The field value(s) that triggered the message
-	 * @param validValue An example of a valid value 
-	 * @see RebuildCode#getMessage()
+	 * @param fieldValue The value from the line that caused the message to be triggered
+	 * @param validValue An example of a valid value indicating what the line should contain
+	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
 	public UnparseableDateMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
