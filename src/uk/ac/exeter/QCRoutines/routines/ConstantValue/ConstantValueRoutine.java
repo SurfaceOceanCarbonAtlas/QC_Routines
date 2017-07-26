@@ -98,6 +98,7 @@ public class ConstantValueRoutine extends Routine {
 	 * Determines whether or not the value in the passed record is identical to that
 	 * in the list of constant records. Null values always return a 'not constant' result.
 	 * @param record The record to be checked
+	 * @param firstRecord The first record of the period of constant values
 	 * @return {@code true} if the value in the record equals that in the list of constant records; {@code false} otherwise.
 	 * @throws RoutineException If the value cannot be compared.
 	 */
@@ -129,6 +130,7 @@ public class ConstantValueRoutine extends Routine {
 	/**
 	 * See how long the value has been constant in the set of stored records.
 	 * If the value is constant for longer than the maximum time, flag each record accordingly.
+	 * @param constantRecords The records to be checked
 	 * @throws RoutineException If the records cannot be flagged.
 	 */
 	private void doDurationCheck(List<DataRecord> constantRecords) throws RoutineException {

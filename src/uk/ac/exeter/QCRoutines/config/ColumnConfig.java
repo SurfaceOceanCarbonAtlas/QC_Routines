@@ -23,7 +23,7 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
  * <p>
  *   The configuration is stored in a CSV file, with columns in the same order
  *   as they are in the data file. Each line of the file contains the following values:
- * <p>
+ * </p>
  * 
  * <ol>
  *   <li>
@@ -59,7 +59,7 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
  * <p>
  *   When a {@link Flag} is set on a column, it can 'cascade' so that flags
  *   are set on other columns. For example, a questionable sea surface temperature
- *   value will mean that the calculated fCO<sub>2 is also questionable.
+ *   value will mean that the calculated fCO<sub>2</sub> is also questionable.
  * </p>
  * 
  * <p>
@@ -68,7 +68,7 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
  * 
  * <p>
  *   {@code <Target column name>|<Flag to set on Questionable>|<Flag to set on Bad>}
- * <p>
+ * </p>
  * 
  * <p>
  *   Multiple cascade columns can be specified, separated by semi-colons.
@@ -90,7 +90,7 @@ import uk.ac.exeter.QCRoutines.util.RoutineUtils;
  * 
  * <p>
  *   Note that these cascades will only set flags if they are 'worse' than the flag that is already set, i.e.
- *   Good -> Questionable -> Bad. A Questionable flag cascading to a column that already has a Bad flag will have no effect.
+ *   Good -&gt; Questionable -&gt; Bad. A Questionable flag cascading to a column that already has a Bad flag will have no effect.
  * </p>
  * 
  * @see Flag
@@ -190,6 +190,7 @@ public class ColumnConfig {
 	
 	/**
 	 * Reads and parses the contents of the column config file
+	 * @throws ConfigException If the configuration is invalid or the file cannot be read 
 	 */
 	private void readFile() throws ConfigException {
 		try {

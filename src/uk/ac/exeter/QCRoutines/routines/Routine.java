@@ -105,6 +105,7 @@ public abstract class Routine {
 	/**
 	 * Perform the actual routine processing. Dynamic parameters will have been replaced
 	 * by their concrete values by this point.
+	 * @param records The records to be processed
 	 * @throws RoutineException If an error occurs during processing
 	 */
 	protected abstract void doRecordProcessing(List<DataRecord> records) throws RoutineException;
