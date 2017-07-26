@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.ac.exeter.QCRoutines.config.ColumnConfig;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
@@ -15,6 +14,14 @@ import uk.ac.exeter.QCRoutines.routines.Monotonic.MissingTimeMessage;
 import uk.ac.exeter.QCRoutines.routines.Monotonic.MonotonicMessage;
 import uk.ac.exeter.QCRoutines.routines.Monotonic.MonotonicRoutine;
 
+/**
+ * QC Routine for checking that the ship is not moving too fast.
+ * The speed is calculated by the distance travelled and time elapsed
+ * between the record being passed in and the previous record.
+ * 
+ * @author Steve Jones
+ *
+ */
 public class ShipSpeedRoutine extends Routine {
 
 	/**
@@ -22,8 +29,14 @@ public class ShipSpeedRoutine extends Routine {
 	 */
 	private static final double EARTH_RADIUS = 6367.5;
 	
+	/**
+	 * The speed above which a {@link Flag#BAD} will be raised
+	 */
 	private double badSpeedLimit = 0;
 	
+	/**
+	 * The speed above which a {@link Flag#QUESTIONABLE} will be raised
+	 */
 	private double questionableSpeedLimit = 0;
 	
 	@Override
