@@ -138,20 +138,20 @@ public class RebuildCode {
 	 */
 	@SuppressWarnings("unchecked")
 	public RebuildCode(String code) throws RebuildCodeException {
-			
-		String[] codeComponents = code.split("_");
-		if (codeComponents.length != 7) {
+
+		List<String> codeComponents = extractComponents(code);
+		if (codeComponents.size() != 7) {
 			throw new RebuildCodeException("Incorrect number of elements");
 		} else {
 			
 			try {
-				messageClass = (Class<? extends Message>) Class.forName(codeComponents[CODE_INDEX_CLASS_NAME]);
+				messageClass = (Class<? extends Message>) Class.forName(codeComponents.get(CODE_INDEX_CLASS_NAME));
 			} catch (ClassNotFoundException e) {
-				throw new RebuildCodeException("Cannot find message class '" + codeComponents[0] + "'");
+				throw new RebuildCodeException("Cannot find message class '" + codeComponents.get(CODE_INDEX_CLASS_NAME) + "'");
 			}
 			
 			try {
-				lineNumber = Integer.parseInt(codeComponents[CODE_INDEX_LINE_NUMBER]);
+				lineNumber = Integer.parseInt(codeComponents.get(CODE_INDEX_LINE_NUMBER));
 				if (lineNumber < 1) {
 					throw new RebuildCodeException("Invalid line number");
 				}
@@ -162,7 +162,7 @@ public class RebuildCode {
 			try {
 				columnIndices = new TreeSet<Integer>();
 				
-				String[] indices = codeComponents[CODE_INDEX_COLUMN_INDEX].split("\\|");
+				String[] indices = codeComponents.get(CODE_INDEX_COLUMN_INDEX).split("\\|");
 				for (String indexString : indices) {
 					int columnIndex = Integer.parseInt(indexString);
 					if (columnIndex < 0 && columnIndex != Message.NO_COLUMN_INDEX) {
@@ -176,17 +176,17 @@ public class RebuildCode {
 				throw new RebuildCodeException("Unparseable column index value");
 			}
 			
-			if (codeComponents[CODE_INDEX_COLUMN_NAME].length() == 0) {
+			if (codeComponents.get(CODE_INDEX_COLUMN_NAME).length() == 0) {
 				columnNames = new TreeSet<String>();
 				for (int i = 0; i < columnIndices.size(); i++) {
 					columnNames.add("");
 				}	
 			} else {
-				columnNames = new TreeSet<String>(Arrays.asList(codeComponents[CODE_INDEX_COLUMN_NAME].split("\\|")));
+				columnNames = new TreeSet<String>(Arrays.asList(codeComponents.get(CODE_INDEX_COLUMN_NAME).split("\\|")));
 			}
 			
 			try {
-				flagValue = Integer.parseInt(codeComponents[CODE_INDEX_FLAG_VALUE]);
+				flagValue = Integer.parseInt(codeComponents.get(CODE_INDEX_FLAG_VALUE));
 				if (!Flag.isValidFlagValue(flagValue)) {
 					throw new RebuildCodeException("Invalid flag value");
 				}
@@ -194,8 +194,8 @@ public class RebuildCode {
 				throw new RebuildCodeException("Unparseable flag value");
 			}
 			
-			fieldValue = codeComponents[CODE_INDEX_FIELD_VALUE];
-			validValue = codeComponents[CODE_INDEX_VALID_VALUE];
+			fieldValue = codeComponents.get(CODE_INDEX_FIELD_VALUE);
+			validValue = codeComponents.get(CODE_INDEX_VALID_VALUE);
 		}
 	}
 	
@@ -224,7 +224,7 @@ public class RebuildCode {
 		int nameCount = 0;
 		for (String columnName : columnNames) {
 			nameCount++;
-			result.append(columnName);
+			result.append(columnName.replaceAll("_", "\\\\_")); // Escape underscores in column names
 			if (nameCount < columnNames.size()) {
 				result.append('|');
 			}
@@ -296,5 +296,42 @@ public class RebuildCode {
 		}
 		
 		return codes.toString();
+	}
+	
+	/**
+	 * Extract the individual components from a Rebuild Code string
+	 * @param code The code string
+	 * @return The code components
+	 */
+	private List<String> extractComponents(String code) {
+		
+		List<String> fields = new ArrayList<String>();
+
+		int currentIndex = 0;
+		StringBuilder fieldValue = new StringBuilder();
+		
+		while (currentIndex < code.length()) {
+
+			// Skip backslashes
+			if (code.charAt(currentIndex) != '\\') {
+				
+				if (code.charAt(currentIndex) == '_') {
+					if (code.charAt(currentIndex - 1) == '\\') {
+						fieldValue.append('_');
+					} else {
+						fields.add(fieldValue.toString());
+						fieldValue = new StringBuilder();
+					}
+				} else {
+					fieldValue.append(code.charAt(currentIndex));
+				}
+			}
+			
+			currentIndex++;
+		}
+		
+		fields.add(fieldValue.toString());
+		
+		return fields;
 	}
 }
