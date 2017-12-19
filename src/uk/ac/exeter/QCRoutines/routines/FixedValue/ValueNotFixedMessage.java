@@ -24,7 +24,7 @@ public class ValueNotFixedMessage extends Message {
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public ValueNotFixedMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public ValueNotFixedMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -37,7 +37,7 @@ public class ValueNotFixedMessage extends Message {
 	 * @throws MessageException If the message cannot be created
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public ValueNotFixedMessage(int lineNumber, DataColumn dataColumn, Flag flag, String validValue) throws MessageException {
+	public ValueNotFixedMessage(long lineNumber, DataColumn dataColumn, Flag flag, String validValue) throws MessageException {
 		super(lineNumber, dataColumn, flag, validValue);
 	}
 

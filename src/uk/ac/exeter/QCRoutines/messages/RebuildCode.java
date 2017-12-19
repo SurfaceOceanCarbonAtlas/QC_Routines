@@ -86,7 +86,7 @@ public class RebuildCode {
 	/**
 	 * The line number
 	 */
-	private int lineNumber;
+	private long lineNumber;
 	
 	/**
 	 * The column indices
@@ -151,7 +151,7 @@ public class RebuildCode {
 			}
 			
 			try {
-				lineNumber = Integer.parseInt(codeComponents.get(CODE_INDEX_LINE_NUMBER));
+				lineNumber = Long.parseLong(codeComponents.get(CODE_INDEX_LINE_NUMBER));
 				if (lineNumber < 1) {
 					throw new RebuildCodeException("Invalid line number");
 				}
@@ -253,7 +253,7 @@ public class RebuildCode {
 	 */
 	public Message getMessage() throws MessageException {
 		try {
-			Constructor<?> messageConstructor = messageClass.getConstructor(int.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
+			Constructor<?> messageConstructor = messageClass.getConstructor(long.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
 			return (Message) messageConstructor.newInstance(lineNumber, columnIndices, columnNames, new Flag(flagValue), fieldValue, validValue);
 		} catch (Exception e) {
 			throw new MessageException("Error while constructing message object from rebuild code", e);

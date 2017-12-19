@@ -17,7 +17,7 @@ public class NoSuchColumnException extends DataRecordException {
 	 * @param lineNumber The line number on which the error was raised
 	 * @param columnIndex The column index
 	 */
-	public NoSuchColumnException(int lineNumber, int columnIndex) {
+	public NoSuchColumnException(long lineNumber, int columnIndex) {
 		super(lineNumber, "There is no column with index " + columnIndex);
 	}
 	
@@ -26,7 +26,7 @@ public class NoSuchColumnException extends DataRecordException {
 	 * @param lineNumber The line number on which the error was raised
 	 * @param columnName The column name
 	 */
-	public NoSuchColumnException(int lineNumber, String columnName) {
+	public NoSuchColumnException(long lineNumber, String columnName) {
 		super(lineNumber, "There is no column with the name '" + columnName + "'");
 	}
 	

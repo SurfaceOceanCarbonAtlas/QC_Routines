@@ -24,7 +24,7 @@ public class OutlierMessage extends Message {
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public OutlierMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public OutlierMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -36,7 +36,7 @@ public class OutlierMessage extends Message {
 	 * @param stdevLimit The standard deviation limit
 	 * @throws MessageException If the message cannot be created
 	 */
-	public OutlierMessage(int lineNumber, DataColumn dataColumn, double recordStdev, double stdevLimit) throws MessageException {
+	public OutlierMessage(long lineNumber, DataColumn dataColumn, double recordStdev, double stdevLimit) throws MessageException {
 		super(lineNumber, dataColumn, Flag.BAD, String.valueOf(recordStdev), String.valueOf(stdevLimit));
 	}
 

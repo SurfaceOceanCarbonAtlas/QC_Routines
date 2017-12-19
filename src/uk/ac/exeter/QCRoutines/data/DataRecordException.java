@@ -21,7 +21,7 @@ public class DataRecordException extends Exception {
 	/**
 	 * The line number of the input file that was being processed when the error occurred.
 	 */
-	protected int lineNumber;
+	protected long lineNumber;
 	
 	/**
 	 * The column in which the error occurred
@@ -34,7 +34,7 @@ public class DataRecordException extends Exception {
 	 * @param lineNumber The line number of the record
 	 * @param message The error message
 	 */
-	public DataRecordException(int lineNumber, String message) {
+	public DataRecordException(long lineNumber, String message) {
 		super(message);
 		this.lineNumber = lineNumber;
 	}
@@ -46,7 +46,7 @@ public class DataRecordException extends Exception {
 	 * @param message The error message
 	 * @param cause The underlying cause of the error
 	 */
-	public DataRecordException(int lineNumber, String message, Throwable cause) {
+	public DataRecordException(long lineNumber, String message, Throwable cause) {
 		super(message, cause);
 		this.lineNumber = lineNumber;
 	}
@@ -57,7 +57,7 @@ public class DataRecordException extends Exception {
 	 * @param column The column in which the error occurred
 	 * @param message The error message
 	 */
-	public DataRecordException(int lineNumber, DataColumn column, String message) {
+	public DataRecordException(long lineNumber, DataColumn column, String message) {
 		super(message);
 		this.lineNumber = lineNumber;
 		this.column = column;
@@ -70,7 +70,7 @@ public class DataRecordException extends Exception {
 	 * @param message The error message
 	 * @param cause The underlying cause of the error
 	 */
-	public DataRecordException(int lineNumber, DataColumn column, String message, Throwable cause) {
+	public DataRecordException(long lineNumber, DataColumn column, String message, Throwable cause) {
 		super(message, cause);
 		this.lineNumber = lineNumber;
 		this.column = column;

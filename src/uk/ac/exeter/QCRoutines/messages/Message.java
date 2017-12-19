@@ -51,7 +51,7 @@ public abstract class Message {
 	/**
 	 * The line number to which this message applies
 	 */
-	protected int lineNumber;
+	protected long lineNumber;
 	
 	/**
 	 * The value from the line that caused the message to be generated
@@ -79,7 +79,7 @@ public abstract class Message {
 	 * @param fieldValue The value from the line that caused the message to be generated
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 */
-	public Message(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public Message(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		this.lineNumber = lineNumber;
 		this.columnIndices = columnIndices;
 		this.columnNames = columnNames;
@@ -103,7 +103,7 @@ public abstract class Message {
 	 * @see #Message(int, TreeSet, TreeSet, Flag, String, String)
 	 * @see #validValue
 	 */
-	public Message(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) throws MessageException {
+	public Message(long lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue, String validValue) throws MessageException {
 		this.lineNumber = lineNumber;
 
 		columnIndices = new TreeSet<Integer>();
@@ -134,7 +134,7 @@ public abstract class Message {
 	 * @see #Message(int, TreeSet, TreeSet, Flag, String, String)
 	 * @see #validValue
 	 */
-	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String validValue) throws MessageException {
+	public Message(long lineNumber, DataColumn dataColumn, Flag flag, String validValue) throws MessageException {
 		this.lineNumber = lineNumber;
 		
 		columnIndices = new TreeSet<Integer>();
@@ -168,7 +168,7 @@ public abstract class Message {
 	 * @see #Message(int, TreeSet, TreeSet, Flag, String, String)
 	 * @see #validValue
 	 */
-	public Message(int lineNumber, DataColumn dataColumn, Flag flag, String fieldValue, String validValue) throws MessageException {
+	public Message(long lineNumber, DataColumn dataColumn, Flag flag, String fieldValue, String validValue) throws MessageException {
 		this.lineNumber = lineNumber;
 		
 		columnIndices = new TreeSet<Integer>();
@@ -188,7 +188,7 @@ public abstract class Message {
 	 * Returns the line number for which this message was raised.
 	 * @return The line number for which this message was raised.
 	 */
-	public int getLineNumber() {
+	public long getLineNumber() {
 		return lineNumber;
 	}
 	

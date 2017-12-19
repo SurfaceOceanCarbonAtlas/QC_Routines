@@ -25,7 +25,7 @@ public class HighDeltaMessage extends Message {
 	 * @param validValue An example of a valid value 
 	 * @see RebuildCode#getMessage()
 	 */
-	public HighDeltaMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public HighDeltaMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -37,7 +37,7 @@ public class HighDeltaMessage extends Message {
 	 * @param maxDelta The maximum allowable delta between records, in units per minute.
 	 * @throws MessageException If an error occurs while constructing the message
 	 */
-	public HighDeltaMessage(int lineNumber, DataColumn dataColumn, double recordDelta, double maxDelta) throws MessageException {
+	public HighDeltaMessage(long lineNumber, DataColumn dataColumn, double recordDelta, double maxDelta) throws MessageException {
 		super(lineNumber, dataColumn, Flag.BAD, String.valueOf(recordDelta), String.valueOf(maxDelta));
 	}
 

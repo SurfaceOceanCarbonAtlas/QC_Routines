@@ -19,7 +19,7 @@ public class MissingValueMessage extends Message {
 	 * @param validValue An example of a valid value 
 	 * @see RebuildCode#getMessage()
 	 */
-	public MissingValueMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public MissingValueMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -31,7 +31,7 @@ public class MissingValueMessage extends Message {
 	 * @param flag The flag for the message
 	 * @throws MessageException If the message cannot be created
 	 */
-	public MissingValueMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag) throws MessageException {
+	public MissingValueMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag) throws MessageException {
 		super(lineNumber, columnIndices, columnNames, flag, null, null);
 	}
 
@@ -43,7 +43,7 @@ public class MissingValueMessage extends Message {
 	 * @param flag The flag for the message
 	 * @throws MessageException If the message cannot be created
 	 */
-	public MissingValueMessage(int lineNumber, int columnIndex, String columnName, Flag flag) throws MessageException {
+	public MissingValueMessage(long lineNumber, int columnIndex, String columnName, Flag flag) throws MessageException {
 		super(lineNumber, columnIndex, columnName, flag, null, null);
 	}
 

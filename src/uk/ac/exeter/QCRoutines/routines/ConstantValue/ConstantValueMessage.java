@@ -25,7 +25,7 @@ public class ConstantValueMessage extends Message {
 	 * @param validValue An example of a valid value 
 	 * @see RebuildCode#getMessage()
 	 */
-	public ConstantValueMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public ConstantValueMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -37,7 +37,7 @@ public class ConstantValueMessage extends Message {
 	 * @param maxConstantTime The maximum time for which the column is allowed to be constant
 	 * @throws MessageException If an error occurs while constructing the message
 	 */
-	public ConstantValueMessage(int lineNumber, DataColumn dataColumn, double constantTime, double maxConstantTime) throws MessageException {
+	public ConstantValueMessage(long lineNumber, DataColumn dataColumn, double constantTime, double maxConstantTime) throws MessageException {
 		super(lineNumber, dataColumn, Flag.BAD, String.valueOf(constantTime), String.valueOf(constantTime));
 	}
 
@@ -50,5 +50,4 @@ public class ConstantValueMessage extends Message {
 	public String getShortMessage() {
 		return getColumnNamesAsString() + " constant for too long";
 	}
-
 }

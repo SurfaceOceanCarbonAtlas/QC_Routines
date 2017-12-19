@@ -24,7 +24,7 @@ public class RangeCheckMessage extends Message {
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public RangeCheckMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public RangeCheckMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -38,7 +38,7 @@ public class RangeCheckMessage extends Message {
 	 * @param rangeMax The maximum value of the accepted range
 	 * @throws MessageException If the message cannot be created
 	 */
-	public RangeCheckMessage(int lineNumber, DataColumn dataColumn, Flag flag, double fieldValue, double rangeMin, double rangeMax) throws MessageException {
+	public RangeCheckMessage(long lineNumber, DataColumn dataColumn, Flag flag, double fieldValue, double rangeMin, double rangeMax) throws MessageException {
 		super(lineNumber, dataColumn, flag, String.valueOf(fieldValue), rangeMin + " - " + rangeMax);
 	}
 

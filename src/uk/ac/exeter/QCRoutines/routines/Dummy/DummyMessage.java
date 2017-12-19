@@ -24,7 +24,7 @@ public class DummyMessage extends Message {
 	 * @param validValue An example of a valid value 
 	 * @see RebuildCode#getMessage()
 	 */
-	public DummyMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public DummyMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 
@@ -37,7 +37,7 @@ public class DummyMessage extends Message {
 	 * @param fieldValue The field value that caused the message to be raised
 	 * @throws MessageException If an error occurs while constructing the message
 	 */
-	public DummyMessage(int lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue) throws MessageException {
+	public DummyMessage(long lineNumber, int columnIndex, String columnName, Flag flag, String fieldValue) throws MessageException {
 		super(lineNumber, columnIndex, columnName, flag, fieldValue, null);
 	}
 

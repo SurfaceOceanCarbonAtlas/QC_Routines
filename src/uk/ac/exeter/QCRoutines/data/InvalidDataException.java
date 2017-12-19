@@ -20,7 +20,7 @@ public class InvalidDataException extends DataRecordException {
 	 * @param lineNumber The line number on which the error was found
 	 * @param sourceColumn The column whose data is of the incorrect type
 	 */
-	public InvalidDataException(int lineNumber, DataColumn sourceColumn) {
+	public InvalidDataException(long lineNumber, DataColumn sourceColumn) {
 		super(lineNumber, sourceColumn, "");
 	}
 	

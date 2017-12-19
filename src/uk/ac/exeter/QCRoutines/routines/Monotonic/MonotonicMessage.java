@@ -24,7 +24,7 @@ public class MonotonicMessage extends Message {
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public MonotonicMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public MonotonicMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 	

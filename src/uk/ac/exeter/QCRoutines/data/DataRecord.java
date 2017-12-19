@@ -34,7 +34,7 @@ public abstract class DataRecord {
 	/**
 	 * The line number of this record in the original file
 	 */
-	protected int lineNumber;
+	protected long lineNumber;
 	
 	/**
 	 * The record data
@@ -47,7 +47,7 @@ public abstract class DataRecord {
 	 * @param lineNumber The record's line number
 	 * @param columnConfig The column configuration
 	 */
-	public DataRecord(int lineNumber, ColumnConfig columnConfig) {
+	public DataRecord(long lineNumber, ColumnConfig columnConfig) {
 		this.messages = new ArrayList<Message>();
 		this.lineNumber = lineNumber;
 		this.data = columnConfig.getDataColumns(this);
@@ -296,7 +296,7 @@ public abstract class DataRecord {
 	 * Returns the line number in the original data file that this record came from
 	 * @return The line number
 	 */
-	public int getLineNumber() {
+	public long getLineNumber() {
 		return lineNumber;
 	}
 

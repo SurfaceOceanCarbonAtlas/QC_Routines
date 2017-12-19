@@ -25,7 +25,7 @@ public class MissingTimeMessage extends MissingValueMessage {
 	 * @param validValue An example of a valid value indicating what the line should contain
 	 * @see Message#Message(int, TreeSet, TreeSet, Flag, String, String)
 	 */
-	public MissingTimeMessage(int lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
+	public MissingTimeMessage(long lineNumber, TreeSet<Integer> columnIndices, TreeSet<String> columnNames, Flag flag, String fieldValue, String validValue) {
 		super(lineNumber, columnIndices, columnNames, flag, fieldValue, validValue);
 	}
 	
