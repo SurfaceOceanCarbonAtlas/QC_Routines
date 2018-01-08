@@ -324,7 +324,7 @@ public abstract class Message {
 		boolean hasConstructor = true;
 		
 		try {
-			Constructor<?> constructor = messageClass.getConstructor(int.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
+			Constructor<?> constructor = messageClass.getConstructor(long.class, TreeSet.class, TreeSet.class, Flag.class, String.class, String.class);
 			
 			// Check that the Set is for Integers
 			Type[] constructorGenericTypes = constructor.getGenericParameterTypes();
