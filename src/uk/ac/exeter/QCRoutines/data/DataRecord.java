@@ -7,6 +7,8 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 
 import uk.ac.exeter.QCRoutines.config.ColumnConfig;
+import uk.ac.exeter.QCRoutines.config.ColumnConfigItem;
+import uk.ac.exeter.QCRoutines.config.InvalidDataTypeException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.messages.MessageException;
@@ -203,6 +205,43 @@ public abstract class DataRecord {
 		}
 
 		return column.getName();
+	}
+	
+	/**
+	 * Get a numeric value from a column
+	 * @param columnIndex The column index
+	 * @return The value
+	 * @throws NoSuchColumnException If the column does not exist
+	 * @throws InvalidDataTypeException If the column is not numeric
+	 */
+	public Double getNumericValue(int columnIndex) throws NoSuchColumnException, InvalidDataTypeException {
+		DataColumn column = data.get(columnIndex);
+		if (null == column) {
+			throw new NoSuchColumnException(lineNumber, columnIndex);
+		}
+
+		if (!column.getDataType().equals(ColumnConfigItem.TYPE_NUMERIC)) {
+			throw new InvalidDataTypeException("Column " + columnIndex + " is not numeric");
+		}
+		
+		Double result = null;
+		String value = column.getValue();
+		if (null != value) {
+			result = Double.parseDouble(value);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get a numeric value from a column
+	 * @param columnName The column name
+	 * @return The value
+	 * @throws NoSuchColumnException If the column does not exist
+	 * @throws InvalidDataTypeException If the column is not numeric
+	 */
+	public Double getNumericValue(String columnName) throws NoSuchColumnException, InvalidDataTypeException {
+		return getNumericValue(getColumnIndex(columnName));
 	}
 	
 	/**
