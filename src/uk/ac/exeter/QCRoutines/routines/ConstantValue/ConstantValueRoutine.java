@@ -92,6 +92,10 @@ public class ConstantValueRoutine extends Routine {
 				
 			}
 		}
+		
+		if (recordCollection.size() > 1) {
+			doDurationCheck(recordCollection);
+		}
 	}
 	
 	/**
