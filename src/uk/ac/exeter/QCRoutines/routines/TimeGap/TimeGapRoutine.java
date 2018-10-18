@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
+import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
@@ -28,13 +29,13 @@ public class TimeGapRoutine extends Routine {
 		if (parameters.size() != 1) {
 			throw new RoutineException("Incorrect number of parameters - should be <gapLimit>");
 		}
-		
+
 		try {
 			gapLimit = Integer.parseInt(parameters.get(0));
 		} catch (NumberFormatException e) {
 			throw new RoutineException("Gap Limit parameter must be numeric");
 		}
-		
+
 		if (gapLimit <= 0) {
 			throw new RoutineException("Gap limit must be greater than zero");
 		}
@@ -43,14 +44,14 @@ public class TimeGapRoutine extends Routine {
 	@Override
 	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
 		DateTime lastTime = null;
-		
+
 		try {
 			for (DataRecord record : records) {
 				if (null != lastTime) {
 					DateTime recordTime = record.getTime();
 					if (null != recordTime) {
 						double gap = calcDayDiff(lastTime, recordTime);
-						
+
 						if (gap > gapLimit) {
 							try {
 								addMessage(new TimeGapMessage(record, gap, gapLimit), record);
@@ -60,7 +61,7 @@ public class TimeGapRoutine extends Routine {
 						}
 					}
 				}
-			
+
 				// Record date ready for next record
 				lastTime = record.getTime();
 			}
@@ -68,7 +69,7 @@ public class TimeGapRoutine extends Routine {
 			throw new RoutineException("Error while retrieving data", e);
 		}
 	}
-	
+
 	/**
 	 * Calculate the difference between two times in days
 	 * @param time1 The first time
@@ -77,6 +78,11 @@ public class TimeGapRoutine extends Routine {
 	 */
 	private double calcDayDiff(DateTime time1, DateTime time2) {
 		long difference = time2.getMillis() - time1.getMillis();
-		return (double) (difference / 3600000.0) / 24;
+		return difference / 3600000.0 / 24;
 	}
+
+  @Override
+  public Class<? extends Message> getMessageClass() {
+    return TimeGapMessage.class;
+  }
 }

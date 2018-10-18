@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
+import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 import uk.ac.exeter.QCRoutines.routines.Monotonic.MissingTimeException;
@@ -18,7 +19,7 @@ import uk.ac.exeter.QCRoutines.routines.Monotonic.MonotonicRoutine;
  * QC Routine for checking that the ship is not moving too fast.
  * The speed is calculated by the distance travelled and time elapsed
  * between the record being passed in and the previous record.
- * 
+ *
  * @author Steve Jones
  *
  */
@@ -28,57 +29,57 @@ public class ShipSpeedRoutine extends Routine {
 	 * The radius of the earth in kilometres
 	 */
 	private static final double EARTH_RADIUS = 6367.5;
-	
+
 	/**
 	 * The speed above which a {@link Flag#BAD} will be raised
 	 */
 	private double badSpeedLimit = 0;
-	
+
 	/**
 	 * The speed above which a {@link Flag#QUESTIONABLE} will be raised
 	 */
 	private double questionableSpeedLimit = 0;
-	
+
 	@Override
 	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() < 2) {
 			throw new RoutineException("Must supply two parameters: Questionable Speed Limit and Bad Speed Limit");
 		}
-		
+
 		try {
 			questionableSpeedLimit = Double.parseDouble(parameters.get(0));
 			badSpeedLimit = Double.parseDouble(parameters.get(1));
-			
+
 		} catch(NumberFormatException e) {
 			throw new RoutineException("All speed parameters must be numeric");
 		}
-		
+
 		if (questionableSpeedLimit > badSpeedLimit) {
-			throw new RoutineException("Bad speed limit must be >= Questionable speed limit"); 
+			throw new RoutineException("Bad speed limit must be >= Questionable speed limit");
 		}
 	}
 
 	@Override
 	protected void doRecordProcessing(List<DataRecord> records) throws RoutineException {
-		
+
 		try {
 			DataRecord lastRecord = null;
-			
+
 			for (DataRecord currentRecord : records) {
 				if (null != lastRecord) {
 					double lastLon = lastRecord.getLongitude();
 					double lastLat = lastRecord.getLatitude();
 					DateTime lastTime = lastRecord.getTime();
-					
+
 					double thisLon = currentRecord.getLongitude();
 					double thisLat = currentRecord.getLatitude();
 					DateTime thisTime = currentRecord.getTime();
-					
+
 					if (null != lastTime && null != thisTime) {
-					
+
 						double distance = calcDistance(lastLon, lastLat, thisLon, thisLat);
 						double hourDiff = MonotonicRoutine.calcHourDiff(lastRecord, currentRecord);
-						
+
 						if (hourDiff <= 0.0) {
 							addMessage(new MonotonicMessage(currentRecord, Flag.BAD), currentRecord);
 						} else if (calcSecondsDiff(lastTime, thisTime) > 1) {
@@ -91,7 +92,7 @@ public class ShipSpeedRoutine extends Routine {
 						}
 					}
 				}
-				
+
 				lastRecord = currentRecord;
 			}
 		} catch (DataRecordException e) {
@@ -103,7 +104,7 @@ public class ShipSpeedRoutine extends Routine {
 				throw new RoutineException("Error while adding message to record", e2);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -115,21 +116,21 @@ public class ShipSpeedRoutine extends Routine {
 	 * @return The distance between the two points
 	 */
 	private double calcDistance(double lon1, double lat1, double lon2, double lat2) {
-		
+
 		double lon1Rad = calcRadians(lon1);
 		double lat1Rad = calcRadians(lat1);
 		double lon2Rad = calcRadians(lon2);
 		double lat2Rad = calcRadians(lat2);
-		
+
 		double deltaLon = lon2Rad - lon1Rad;
 		double deltaLat = lat2Rad - lat2Rad;
-		
+
 		double a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.pow(Math.sin(deltaLon / 2), 2);
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		
+
 		return c * EARTH_RADIUS;
 	}
-	
+
 	/**
 	 * Convert degrees to radians
 	 * @param degrees The degrees value to be converted
@@ -138,7 +139,7 @@ public class ShipSpeedRoutine extends Routine {
 	private double calcRadians(double degrees) {
 		return degrees * (Math.PI / 180);
 	}
-	
+
 	/**
 	 * Calculate the difference between two times in seconds
 	 * @param time1 The first time
@@ -147,6 +148,11 @@ public class ShipSpeedRoutine extends Routine {
 	 */
 	private double calcSecondsDiff(DateTime time1, DateTime time2) {
 		long difference = time2.getMillis() - time1.getMillis();
-		return (double) difference / 1000.0;
+		return difference / 1000.0;
 	}
+
+  @Override
+  public Class<? extends Message> getMessageClass() {
+    return ShipSpeedMessage.class;
+  }
 }

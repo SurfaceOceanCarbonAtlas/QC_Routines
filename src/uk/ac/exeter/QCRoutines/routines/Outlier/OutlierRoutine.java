@@ -9,13 +9,14 @@ import uk.ac.exeter.QCRoutines.data.DataRecord;
 import uk.ac.exeter.QCRoutines.data.DataRecordException;
 import uk.ac.exeter.QCRoutines.data.NoSuchColumnException;
 import uk.ac.exeter.QCRoutines.messages.Flag;
+import uk.ac.exeter.QCRoutines.messages.Message;
 import uk.ac.exeter.QCRoutines.messages.MessageException;
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
 
 /**
  * Routine to detect outliers.
- * 
+ *
  * <p>
  *   The routine is configured with a column name and a standard deviation limit.
  *   The mean and standard deviation of all the values in that column are calculated.
@@ -35,49 +36,49 @@ public class OutlierRoutine extends Routine {
 	 * The name of the column whose values are to be checked
 	 */
 	private String columnName;
-	
+
 	/**
 	 * The maximum number of standard deviations away from the mean a
 	 * value can be before it is considered an outlier.
 	 */
 	private double stdevLimit;
-	
+
 	@Override
 	protected void processParameters(List<String> parameters) throws RoutineException {
 		if (parameters.size() != 2) {
 			throw new RoutineException("Incorrect number of parameters. Must be <columnName>,<stdevLimit>");
 		}
-		
+
 		columnName = parameters.get(0);
 		if (!columnConfig.hasColumn(columnName)) {
 			throw new RoutineException("Column '" + columnName + "' does not exist");
 		}
-		
+
 		ColumnConfigItem column = columnConfig.getColumnConfig(columnName);
 		if (!column.isNumeric()) {
 			throw new RoutineException("Column '" + columnName + "' must be numeric");
 		}
-		
+
 		try {
 			stdevLimit = Double.parseDouble(parameters.get(1));
 		} catch (NumberFormatException e) {
 			throw new RoutineException("Standard deviation limit parameter must be numeric");
 		}
-		
+
 		if (stdevLimit <= 0) {
 			throw new RoutineException("Standard deviation limit must be greater than zero");
 		}
-		
+
 	}
 
 	@Override
 	public void doRecordProcessing(List<DataRecord> records) throws RoutineException {
-		
+
 		int valueCount = 0;
 		List<RecordValue> recordValues = new ArrayList<RecordValue>();
 		double mean = 0.0;
 		double stdev = 0.0;
-		
+
 		for (DataRecord record : records) {
 			try {
 				String valueString = record.getValue(columnName);
@@ -86,7 +87,7 @@ public class OutlierRoutine extends Routine {
 					if (!Double.isNaN(value) && value != RoutinesConfig.NO_VALUE) {
 						valueCount++;
 						recordValues.add(new RecordValue(record, value));
-						
+
 						if (valueCount == 1) {
 							mean = value;
 						} else {
@@ -102,14 +103,14 @@ public class OutlierRoutine extends Routine {
 				throw new RoutineException("Could not find column '" + columnName + "' in record", e);
 			}
 		}
-		
+
 		// Finalise the stdev calculation
 		stdev = Math.sqrt(stdev / valueCount);
-		
+
 		// Check all values to see if they're outside the limit
 		for (RecordValue recordValue : recordValues) {
 			double diffFromMean = Math.abs(recordValue.value - mean);
-			
+
 			if (diffFromMean > (stdev * stdevLimit)) {
 				try {
 					DataRecord record = recordValue.record;
@@ -123,7 +124,7 @@ public class OutlierRoutine extends Routine {
 		}
 
 	}
-	
+
 	/**
 	 * A simple object to store each record and its column value, to simplify
 	 * checking after the mean and stdev have been calculated.
@@ -134,12 +135,12 @@ public class OutlierRoutine extends Routine {
 		 * The data record
 		 */
 		private DataRecord record;
-		
+
 		/**
 		 * The extracted value
 		 */
 		private double value;
-		
+
 		/**
 		 * Simple constructor
 		 * @param record The data record
@@ -150,4 +151,9 @@ public class OutlierRoutine extends Routine {
 			this.value = value;
 		}
 	}
+
+  @Override
+  public Class<? extends Message> getMessageClass() {
+    return OutlierMessage.class;
+  }
 }
