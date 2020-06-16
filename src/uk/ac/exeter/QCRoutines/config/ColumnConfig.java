@@ -12,10 +12,88 @@ import java.util.Map;
 
 import uk.ac.exeter.QCRoutines.data.DataColumn;
 import uk.ac.exeter.QCRoutines.data.DataRecord;
+import uk.ac.exeter.QCRoutines.messages.Flag;
 import uk.ac.exeter.QCRoutines.util.RoutineUtils;
 
 /**
- * Holds a column configuration
+ * Holds the configuration of columns details for a {@link DataRecord}.
+ * The configuration stores details of the column names, types, and aspects
+ * of the behaviour of {@link Flag} objects attached to them.
+ * 
+ * <p>
+ *   The configuration is stored in a CSV file, with columns in the same order
+ *   as they are in the data file. Each line of the file contains the following values:
+ * </p>
+ * 
+ * <ol>
+ *   <li>
+ *     Column Name
+ *   </li>
+ *   <li>
+ *     Data Type. One of:
+ *     <ul>
+ *       <li>
+ *         {@code S} - String. Times should be set as Strings; they will be parsed automatically.
+ *       </li>
+ *       <li>
+ *         {@code N} - Numeric
+ *       </li>
+ *       <li>
+ *         {@code B} - Boolean
+ *       </li>
+ *     </ul>
+ *   </li>
+ *   <li>
+ *     Required. {@code true} if a value is required, {@code false} otherwise.
+ *     If a Boolean column is empty it is assumed false.
+ *   </li>
+ *   <li>
+ *     Flag Cascade: Flags placed on a column can cascade to other columns. (See below.)
+ *   </li>
+ * </ol>
+ * 
+ * <p>
+ *   <b>Flag Cascading</b>
+ * </p>
+ * 
+ * <p>
+ *   When a {@link Flag} is set on a column, it can 'cascade' so that flags
+ *   are set on other columns. For example, a questionable sea surface temperature
+ *   value will mean that the calculated fCO<sub>2</sub> is also questionable.
+ * </p>
+ * 
+ * <p>
+ *   The specification is as follows:
+ * </p>
+ * 
+ * <p>
+ *   {@code <Target column name>|<Flag to set on Questionable>|<Flag to set on Bad>}
+ * </p>
+ * 
+ * <p>
+ *   Multiple cascade columns can be specified, separated by semi-colons.
+ * </p>
+ *
+ * <p>
+ *   An example configuration line is below;
+ * </p>
+ * 
+ * <p>
+ *   {@code Salinity 1,N,Y,Mean Salinity|3|4;fCO2|2|3}
+ * </p>
+ * 
+ * <p>
+ *   This is the entry for a Salinity column. If its flag is set to Questionable,
+ *   then the Mean Salinity column is also assigned a Questionable flag, while the fCO2 column
+ *   is assigned a Good flag. For a Bad Salinity, Mean Salinity is set to Bad, and fCO2 is set to Questionable.
+ * </p>
+ * 
+ * <p>
+ *   Note that these cascades will only set flags if they are 'worse' than the flag that is already set, i.e.
+ *   Good -&gt; Questionable -&gt; Bad. A Questionable flag cascading to a column that already has a Bad flag will have no effect.
+ * </p>
+ * 
+ * @see Flag
  */
 public class ColumnConfig {
 	
@@ -51,10 +129,10 @@ public class ColumnConfig {
 	
 	/**
 	 * The location of the metadata config file.
-	 * Must be set via {@link #init(String, Logger) before calling
+	 * Must be set via {@link #init(String)} before calling
 	 * {@link #getInstance()}.
 	 */
-	protected static String configFilename = null;
+	private static String configFilename = null;
 
 	/**
 	 * The singleton instance of this class.
@@ -65,8 +143,7 @@ public class ColumnConfig {
 	 * Set the required data for building the singleton instance of this class
 	 * 
 	 * @param filename The name of the file containing the configuration
-	 * @param logger The logger to be used
-	 * @throws ConfigException 
+	 * @throws ConfigException If the configuration is invalid
 	 */
 	public static void init(String filename) throws ConfigException {
 		configFilename = filename;
@@ -75,7 +152,7 @@ public class ColumnConfig {
 
 	/**
 	 * Initialises the column configuration config.
-	 * This cannot be called until after {@link ColumnConfig#init(String)} has been called.
+	 * This cannot be called until after {@link #init(String)} has been called.
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
 	protected ColumnConfig() throws ConfigException {
@@ -113,6 +190,7 @@ public class ColumnConfig {
 	
 	/**
 	 * Reads and parses the contents of the column config file
+	 * @throws ConfigException If the configuration is invalid or the file cannot be read 
 	 */
 	private void readFile() throws ConfigException {
 		try {
@@ -129,12 +207,10 @@ public class ColumnConfig {
 						List<String> fields = Arrays.asList(line.split(","));
 						fields = RoutineUtils.trimList(fields);
 						
-						ColumnConfigItem configItem = createColumnConfigItem(lineCount, entryCount);
+						ColumnConfigItem configItem = new ColumnConfigItem(lineCount, entryCount);
 						parseLine(lineCount, fields, configItem);
 						columnNames.add(configItem.getColumnName());
-						storeConfigItem(configItem);
-
-						
+						columnConfig.put(configItem.getColumnName(), configItem);
 					}
 
 					line = reader.readLine();
@@ -153,11 +229,15 @@ public class ColumnConfig {
 		}
 	}
 	
-	protected ColumnConfigItem createColumnConfigItem(int lineCount, int entryCount) {
-		return new ColumnConfigItem(lineCount, entryCount);
-	}
-
-	protected void parseLine(int lineCount, List<String> fields, ColumnConfigItem columnConfigItem) throws ConfigException {
+	/**
+	 * Parse a line of the configuration file, and populates a {@link ColumnConfigItem}.
+	 * 
+	 * @param lineCount The line number in the file
+	 * @param fields The list of fields from the line
+	 * @param columnConfigItem The config item to be populated
+	 * @throws ConfigException If the line cannot be parsed
+	 */
+	private void parseLine(int lineCount, List<String> fields, ColumnConfigItem columnConfigItem) throws ConfigException {
 
 		if (fields.size() < 3) {
 			throw new ConfigException(configFilename, lineCount, "Column config must contain at least 3 entries (name, type, required)");
@@ -193,11 +273,6 @@ public class ColumnConfig {
 			columnConfigItem.setFlagCascadeConfig(cascadeConfig);
 		}
 	}
-	
-	protected void storeConfigItem(ColumnConfigItem item) {
-		columnConfig.put(item.getColumnName(), item);
-	}
-	
 	
 	/**
 	 * Returns a list of the configured data field names in file order.
@@ -254,6 +329,11 @@ public class ColumnConfig {
 		return columnConfig.keySet().contains(column);
 	}
 	
+	/**
+	 * Create a set of {@link DataColumn} objects for a given {@link DataRecord}.
+	 * @param record The record for which the {@link DataColumn} objects should be created
+	 * @return The set of {@link DataColumn} objects
+	 */
 	public List<DataColumn> getDataColumns(DataRecord record) {
 		List<DataColumn> result = new ArrayList<DataColumn>(columnNames.size());
 		for (int i = 0; i < columnNames.size(); i++) {
@@ -268,7 +348,13 @@ public class ColumnConfig {
 		return result;
 	}
 	
+	/**
+	 * Returns the number of columns configured.
+	 * @return The number of columns
+	 */
 	public int getColumnCount() {
+		// The first column name is null because the indices are 1-based, so
+		// the count reduced by 1.
 		return columnNames.size() - 1;
 	}
 }

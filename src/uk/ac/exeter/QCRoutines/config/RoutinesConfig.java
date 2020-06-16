@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.exeter.QCRoutines.routines.Routine;
 import uk.ac.exeter.QCRoutines.routines.RoutineException;
@@ -16,6 +18,17 @@ import uk.ac.exeter.QCRoutines.routines.RoutineException;
  * input files.
  */
 public class RoutinesConfig {
+	
+	/**
+	 * Indicates an empty value
+	 */
+	public static final double NO_VALUE = -99999.9;
+
+	/**
+	 * The name for the default configuration.
+	 * This is used if only one unnamed instance is used.
+	 */
+	private static final String DEFAULT_CONFIG_NAME = "default";
 	
 	/**
 	 * The name of the package in which all routine classes will be stored
@@ -35,56 +48,94 @@ public class RoutinesConfig {
 	/**
 	 * The name of the configuration file for the routines
 	 */
-	private static String configFilename;
+	private String configFilename;
 	
 	/**
-	 * The singleton instance of this class
+	 * The instances of this class
 	 */
-	private static RoutinesConfig instance;
+	private static Map<String, RoutinesConfig> instances = new HashMap<String, RoutinesConfig>();
 	
 	/**
-	 * Initialises the routines configuration. This cannot be run
-	 * until {@link RoutinesConfig#init(String)} has been called.
-	 * @throws ConfigException If the configuration cannot be loaded
+	 * Initialises a {@code RoutinesConfig} instance. This is called by the
+	 * {@code init} methods.
+	 * @param configFilename The full path to the configuration file
+	 * @throws ConfigException If the configuration is invalid
+	 * @see #init(String)
+	 * @see #init(String, String)
 	 */
-	public RoutinesConfig() throws ConfigException {
+	private RoutinesConfig(String configFilename) throws ConfigException {
 		if (configFilename == null) {
-			throw new ConfigException(null, "RoutinesConfig filename has not been set - must run init first");
+			throw new ConfigException(null, "RoutinesConfig filename has cannot be null");
 		}
+		this.configFilename = configFilename;
 		
 		routineClasses = new ArrayList<CheckerInitData>();
 		readFile();
 	}
 	
 	/**
-	 * Initialise the variables required to bootstrap the RoutinesConfig
-	 * @param filename The name of the configuration file
-	 * @param logger A logger instance
+	 * Initialises an unnamed {@code RoutinesConfig} instance.
+	 * This can be used if only one instance is needed in the application.
+	 * @param filename The full path to the configuration file
+	 * @throws ConfigException If the configuration is invalid
 	 */
 	public static void init(String filename) throws ConfigException {
-		configFilename = filename;
-		instance = new RoutinesConfig();
+		init(DEFAULT_CONFIG_NAME, filename);
 	}
 	
 	/**
-	 * Retrieves the singleton instance of the RoutinesConfig, creating it if it
-	 * does not exist
-	 * @return An instance of the RoutinesConfig
+	 * Initialises a named {@code RoutinesConfig} instance.
+	 * @param instanceName The instance name
+	 * @param filename The full path to the configuration file
+	 * @throws ConfigException If the configuration is invalid
+	 */
+	public static void init(String instanceName, String filename) throws ConfigException {
+		instances.put(instanceName, new RoutinesConfig(filename));
+	}
+	
+	/**
+	 * Retrieves a named {@code RoutinesConfig} instance
+	 * @return The requested instance
 	 * @throws ConfigException If the configuration cannot be loaded
 	 */
-	public static RoutinesConfig getInstance() throws ConfigException {
-		if (null == instance) {
-			throw new ConfigException(null, "RoutinesConfig has not been initialised");
+
+	/**
+	 * Retrieves a named {@code RoutinesConfig} instance
+	 * @param instanceName The instance name
+	 * @return The requested instance
+	 * @throws ConfigException If the instance does not exist
+	 */
+	public static RoutinesConfig getInstance(String instanceName) throws ConfigException {
+		RoutinesConfig requestedInstance = instances.get(instanceName);
+		if (null == requestedInstance) {
+			throw new ConfigException(null, "There is no instance named '" + instanceName + "'");
 		}
 		
-		return instance;
+		return requestedInstance;
 	}
 	
 	/**
-	 * Destroys the singleton instance of the RoutinesConfig
+	 * Retrieves the unnamed {@code RoutinesConfig} instance
+	 * @return The instance
+	 * @throws ConfigException If the instance does not exist
+	 */
+	public static RoutinesConfig getInstance() throws ConfigException {
+		return getInstance(DEFAULT_CONFIG_NAME);
+	}
+	
+	/**
+	 * Destroys the unnamed {@code RoutinesConfig} instance
 	 */
 	public static void destroy() {
-		instance = null;
+		destroy(DEFAULT_CONFIG_NAME);
+	}
+	
+	/**
+	 * Destroys a named {@code RoutinesConfig} instance
+	 * @param instanceName The instance
+	 */
+	public static void destroy(String instanceName) {
+		instances.remove(instanceName);
 	}
 	
 	/**
@@ -143,6 +194,7 @@ public class RoutinesConfig {
 	/**
 	 * Returns a list containing fresh instances of all the configured routine classes
 	 * @return A list containing fresh instances of all the configured routine classes
+	 * @throws RoutineException If the routine cannot be initialised
 	 */
 	public List<Routine> getRoutines() throws RoutineException {
 		List<Routine> checkers = new ArrayList<Routine>(routineClasses.size());

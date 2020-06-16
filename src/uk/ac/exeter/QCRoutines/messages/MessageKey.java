@@ -3,13 +3,15 @@ package uk.ac.exeter.QCRoutines.messages;
 import java.util.Set;
 
 /**
- * Key class for organising messages. Consists of the column index
- * and message type
+ * Key class for messages stored in a {@link MessageSummary}.
+ * 
+ * @see MessageSummary
+ * @see Message
  */
 public class MessageKey {
 
 	/**
-	 * The index of the column that messages under this key
+	 * The indices of the columns that messages under this key
 	 * refer to
 	 */
 	private Set<Integer> columnIndices;
@@ -21,8 +23,8 @@ public class MessageKey {
 	
 	/**
 	 * Construct a MessageKey object
-	 * @param columnIndex The column index
-	 * @param messageType The message type
+	 * @param columnIndices The column indices
+	 * @param messageClass The message class
 	 */
 	public MessageKey(Set<Integer> columnIndices, Class<?> messageClass) {
 		this.columnIndices = columnIndices;

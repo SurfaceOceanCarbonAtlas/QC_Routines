@@ -1,10 +1,30 @@
 package uk.ac.exeter.QCRoutines.messages;
 
 /**
- * Represents a WOCE-type flag, with Good, Questionable or Bad values.
- * There is also a special case for an Unset flag.
+ * Represents a Flag placed on a data record.
+ * 
+ * <p>
+ *   Flags are based on the WOCE flags, with values for Good, Questionable and Bad.
+ *   All records exported from a system should ultimately have one of these three flags
+ *   assigned to it. However, during processing a number of other flag values can be useful:
+ * </p>
+ * <ul>
+ *   <li>
+ *     <b>Assumed Good:</b> Automatic processing has flagged the record as good, and there is
+ *     no indication that this should be changed.
+ *   </li>
+ *   <li>
+ *     <b>Fatal:</b> The record has a fundamental problem which means it cannot be processed at all.
+ *   </li>
+ *   <li>
+ *     <b>Not Set:</b> A flag has not yet been assigned to this record.
+ *   </li>
+ *   <li>
+ *     <b>Needed:</b> A flag must be assigned manually by a human operator.
+ *   </li>
+ * </ul>
+ * 
  * @author Steve Jones
- *
  */
 public class Flag implements Comparable<Flag> {
 
@@ -49,6 +69,16 @@ public class Flag implements Comparable<Flag> {
 	protected static final String TEXT_BAD = "Bad";
 
 	/**
+	 * The special value for a fatal flag
+	 */
+	public static final int VALUE_FATAL = 44;
+	
+	/**
+	 * The text value for a fatal flag
+	 */
+	protected static final String TEXT_FATAL = "Fatal";
+
+	/**
 	 * The special value for an unset flag
 	 */
 	public static final int VALUE_NOT_SET = -1000;
@@ -59,17 +89,23 @@ public class Flag implements Comparable<Flag> {
 	protected static final String TEXT_NOT_SET = "Not Set";
 
 	/**
-	 * The special value for an unset flag
+	 * The special value for a needed flag
 	 */
-	public static final int VALUE_NEEDED = -1001;
+	public static final int VALUE_NEEDED = -10;
 
 	/**
-	 * The text value for an unset flag
+	 * The text value for a needed flag
 	 */
 	protected static final String TEXT_NEEDED = "Needed";
 	
+	/**
+	 * The special value for an Ignored flag
+	 */
 	public static final int VALUE_IGNORED = -1002;
 	
+	/**
+	 * The text value for an Ignored flag
+	 */
 	protected static final String TEXT_IGNORED = "Ignored";
 
 	/**
@@ -88,9 +124,14 @@ public class Flag implements Comparable<Flag> {
 	public static final Flag QUESTIONABLE = makeQuestionableFlag();
 	
 	/**
-	 *  An instance of a Good flag
+	 *  An instance of a Bad flag
 	 */
 	public static final Flag BAD = makeBadFlag();
+	
+	/**
+	 * An instance of a Fatal flag
+	 */
+	public static final Flag FATAL = makeFatalFlag();
 	
 	/**
 	 *  An instance of a Not Set flag
@@ -102,6 +143,9 @@ public class Flag implements Comparable<Flag> {
 	 */
 	public static final Flag NEEDED = makeNeededFlag();
 	
+	/**
+	 * An instance of an Ignored flag
+	 */
 	public static final Flag IGNORED = makeIgnoredFlag();
 	
 	/**
@@ -123,16 +167,17 @@ public class Flag implements Comparable<Flag> {
 	}
 	
 	/**
-	 * Returns the flag's WOCE value
-	 * @return The flag's WOCE value
+	 * Returns the flag's numeric value
+	 * @return The flag's numeric value
 	 */
 	public int getFlagValue() {
 		return flagValue;
 	}
 	
 	/**
-	 * Converts the flag's WOCE value into a String value
+	 * Converts the flag's numeric value into a String value
 	 */
+	@Override
 	public String toString() {
 		String result;
 		
@@ -151,6 +196,10 @@ public class Flag implements Comparable<Flag> {
 		}
 		case VALUE_BAD: {
 			result = TEXT_BAD;
+			break;
+		}
+		case VALUE_FATAL: {
+			result = TEXT_FATAL;
 			break;
 		}
 		case VALUE_NOT_SET: {
@@ -178,11 +227,12 @@ public class Flag implements Comparable<Flag> {
 	 * Checks to ensure that a flag value is valid. If the value is valid, the method does nothing.
 	 * If it is not valid, an exception is thrown.
 	 * @param value The flag value
-	 * @throws InvalidFlagException If the flag value is invalid
+	 * @return {@code true} if the flag value is valid; {@code false} if it is not
 	 */
 	public static boolean isValidFlagValue(int value) {
 		return (value == VALUE_GOOD || value == VALUE_ASSUMED_GOOD || value == VALUE_QUESTIONABLE || 
-				value == VALUE_BAD || value == VALUE_NOT_SET || value == VALUE_NEEDED || value == VALUE_IGNORED);
+				value == VALUE_BAD || value == VALUE_FATAL || value == VALUE_NOT_SET || value == VALUE_NEEDED ||
+				value == VALUE_IGNORED);
 	}
 	
 	/**
@@ -246,6 +296,21 @@ public class Flag implements Comparable<Flag> {
 	}
 	
 	/**
+	 * Create an instance of a Fatal flag
+	 * @return A Fatal flag
+	 */
+	private static Flag makeFatalFlag() {
+		Flag flag = null;
+		try {
+			flag = new Flag(VALUE_FATAL);
+		} catch (InvalidFlagException e) {
+			// This won't be thrown; do nothing
+		}
+		
+		return flag;
+	}
+	
+	/**
 	 * Create an instance of a Not Set flag
 	 * @return A Not Set flag
 	 */
@@ -275,6 +340,10 @@ public class Flag implements Comparable<Flag> {
 		return flag;
 	}
 	
+	/**
+	 * Create an instance of an Ignored flag
+	 * @return An Ignored flag
+	 */
 	private static Flag makeIgnoredFlag() {
 		Flag flag = null;
 		try {
@@ -286,6 +355,7 @@ public class Flag implements Comparable<Flag> {
 		return flag;
 	}
 	
+	@Override
 	public boolean equals(Object compare) {
 		boolean result = false;
 		if (compare instanceof Flag) {
@@ -313,7 +383,60 @@ public class Flag implements Comparable<Flag> {
 		return (compareTo(flag) > 0);
 	}
 	
+	/**
+	 * Determines whether or not this flag represents a Good value.
+	 * Both Good and Assumed Good flags pass the check.
+	 * @return {@code true} if this flag is Good; {@code false} if it is not.
+	 */
 	public boolean isGood() {
 		return Math.abs(flagValue) == VALUE_GOOD;
+	}
+	
+	/**
+	 * Return the WOCE value for a flag.
+	 * @return The WOCE value for the flag
+	 * @see #getWoceValue(int)
+	 */
+	public int getWoceValue() {
+		return getWoceValue(flagValue);
+	}
+	
+	/**
+	 * Return the WOCE value for a given flag value
+	 * 
+	 * <ul>
+	 *   <li>Good and Assumed Good will return 2</li>
+	 *   <li>Questionable will return 3</li>
+	 *   <li>Bad and Fatal will return 4</li>
+	 *   <li>All other flag types will return -1, because there is no corresponding WOCE value.</li>
+	 * </ul>
+	 * 
+	 * @param flagValue The numeric flag value
+	 * @return The WOCE value for the flag
+	 */
+	public static int getWoceValue(int flagValue) {
+		int result;
+		
+		switch(flagValue) {
+		case VALUE_GOOD:
+		case VALUE_ASSUMED_GOOD: {
+			result = 2;
+			break;
+		}
+		case VALUE_QUESTIONABLE: {
+			result = 3;
+			break;
+		}
+		case VALUE_BAD:
+		case VALUE_FATAL: {
+			result = 4;
+			break;
+		}
+		default: {
+			result = -1;
+		}
+		}
+		
+		return result;
 	}
 }
